@@ -16,6 +16,8 @@ const removeWizBtn = document.getElementById("removeWiz");
 
 const generateBtn = document.getElementById("generateBtn");
 const copyBtn = document.getElementById("copyBtn");
+const excelBtn =
+    document.getElementById("excelBtn");
 
 const sharePointInput = document.getElementById("sharepointLink");
 
@@ -36,7 +38,7 @@ Initialize
 
 generateBtn.disabled = true;
 copyBtn.disabled = true;
-
+excelBtn.disabled = true;
 setProgress(0);
 
 /*
@@ -284,6 +286,7 @@ generateBtn.addEventListener("click", () => {
     window.currentReport = report;
 
     copyBtn.disabled = false;
+    excelBtn.disabled = false;
 
     setProgress(2);
 
@@ -350,5 +353,27 @@ copyBtn.addEventListener("click", async () => {
         alert("Unable to copy.");
 
     }
+
+}
+);
+excelBtn.addEventListener("click", () => {
+
+    if (!window.currentReport) {
+
+        alert(
+
+            "Generate report first."
+
+        );
+
+        return;
+
+    }
+
+    exportSharePointExcel(
+
+        window.currentReport
+
+    );
 
 });

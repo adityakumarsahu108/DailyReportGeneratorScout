@@ -634,3 +634,76 @@ table td{
     font-style:italic;
  
 }
+/*
+==========================================
+Generate SharePoint Excel Button
+==========================================
+*/
+
+#excelBtn{
+
+    background:#217346;
+
+    color:#fff;
+
+    border:none;
+
+    border-radius:8px;
+
+    padding:12px 22px;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    font-family:inherit;
+
+    cursor:pointer;
+
+    transition:all .25s ease;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    min-width:240px;
+
+    box-shadow:0 2px 8px rgba(33,115,70,.25);
+
+}
+
+#excelBtn:hover{
+
+    background:#1a5c38;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 6px 16px rgba(33,115,70,.35);
+
+}
+
+#excelBtn:active{
+
+    transform:translateY(0);
+
+    box-shadow:0 2px 8px rgba(33,115,70,.25);
+
+}
+
+#excelBtn:disabled{
+
+    background:#bdbdbd;
+
+    cursor:not-allowed;
+
+    box-shadow:none;
+
+    transform:none;
+
+    opacity:.7;
+
+}
