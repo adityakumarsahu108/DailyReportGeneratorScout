@@ -40,19 +40,25 @@ function readCSV(file) {
                     return;
                 }
 
-                const headers = parseCSVLine(rows[0]);
+                const delimiter =
+                    rows[0].includes("\t") ? "\t" : ",";
+
+                const headers = parseCSVLine(rows[0], delimiter);
 
                 const data = [];
 
                 for (let i = 1; i < rows.length; i++) {
 
-                    const values = parseCSVLine(rows[i]);
-
+                    const values = parseCSVLine(rows[i], delimiter);
                     const obj = {};
 
                     headers.forEach((header, index) => {
 
-                        obj[header.trim()] = values[index]
+                        const cleanHeader = header
+                            .replace(/^\uFEFF/, "")
+                            .trim();
+
+                        obj[cleanHeader] = values[index]
                             ? values[index].trim()
                             : "";
 
@@ -61,7 +67,9 @@ function readCSV(file) {
                     data.push(obj);
 
                 }
-
+                console.log("Detected delimiter:", delimiter);
+                console.log("Headers:", headers);
+                console.log("First record:", data[0]);
                 resolve(data);
 
             } catch (e) {
@@ -88,12 +96,12 @@ function readCSV(file) {
 
 /*
 ==========================================
-Parse CSV Line
-Handles commas inside quotes
+Parse CSV / TSV Line
+Handles commas or tabs inside quotes
 ==========================================
 */
 
-function parseCSVLine(line) {
+function parseCSVLine(line, delimiter = ",") {
 
     const result = [];
 
@@ -108,17 +116,14 @@ function parseCSVLine(line) {
         if (char === '"') {
 
             insideQuotes = !insideQuotes;
-
             continue;
 
         }
 
-        if (char === "," && !insideQuotes) {
+        if (char === delimiter && !insideQuotes) {
 
             result.push(current);
-
             current = "";
-
             continue;
 
         }
@@ -132,8 +137,6 @@ function parseCSVLine(line) {
     return result;
 
 }
-
-
 
 /*
 ==========================================
