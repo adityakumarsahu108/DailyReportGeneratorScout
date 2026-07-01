@@ -17,82 +17,37 @@ function readCSV(file) {
 
     return new Promise((resolve, reject) => {
 
-        if (!file) {
-            reject("No file selected.");
-            return;
-        }
+        Papa.parse(file, {
 
-        const reader = new FileReader();
+            header: true,
 
-        reader.onload = function (event) {
+            skipEmptyLines: true,
 
-            try {
+            dynamicTyping: false,
 
-                const csv = event.target.result;
+            complete: function (results) {
 
-                const rows = csv
-                    .replace(/\r/g, "")
-                    .split("\n")
-                    .filter(row => row.trim() !== "");
+                if (results.errors.length) {
 
-                if (rows.length <= 1) {
-                    reject("CSV contains no data.");
-                    return;
-                }
-
-                const delimiter =
-                    rows[0].includes("\t") ? "\t" : ",";
-
-                const headers = parseCSVLine(rows[0], delimiter);
-
-                const data = [];
-
-                for (let i = 1; i < rows.length; i++) {
-
-                    const values = parseCSVLine(rows[i], delimiter);
-                    const obj = {};
-
-                    headers.forEach((header, index) => {
-
-                        const cleanHeader = header
-                            .replace(/^\uFEFF/, "")
-                            .trim();
-
-                        obj[cleanHeader] = values[index]
-                            ? values[index].trim()
-                            : "";
-
-                    });
-
-                    data.push(obj);
+                    console.warn(results.errors);
 
                 }
-                console.log("Detected delimiter:", delimiter);
-                console.log("Headers:", headers);
-                console.log("First record:", data[0]);
-                resolve(data);
 
-            } catch (e) {
+                resolve(results.data);
 
-                reject("Unable to read CSV.");
+            },
+
+            error: function (error) {
+
+                reject(error);
 
             }
 
-        };
-
-        reader.onerror = () => {
-
-            reject("Unable to read file.");
-
-        };
-
-        reader.readAsText(file);
+        });
 
     });
 
 }
-
-
 
 /*
 ==========================================
