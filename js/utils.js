@@ -23,21 +23,44 @@ function readCSV(file) {
 
             skipEmptyLines: true,
 
+            delimiter: "",       // Auto detect delimiter
+
             dynamicTyping: false,
 
-            complete: function (results) {
+            complete: function(results) {
 
-                if (results.errors.length) {
+                if (results.errors.length > 0) {
 
-                    console.warn(results.errors);
+                    console.warn("Papa Parse Warnings:", results.errors);
 
                 }
 
-                resolve(results.data);
+                // Remove BOM + trim headers
+                const cleaned = results.data.map(row => {
+
+                    const obj = {};
+
+                    Object.keys(row).forEach(key => {
+
+                        const cleanKey = key
+                            .replace(/^\uFEFF/, "")
+                            .trim();
+
+                        obj[cleanKey] = typeof row[key] === "string"
+                            ? row[key].trim()
+                            : row[key];
+
+                    });
+
+                    return obj;
+
+                });
+
+                resolve(cleaned);
 
             },
 
-            error: function (error) {
+            error: function(error) {
 
                 reject(error);
 
