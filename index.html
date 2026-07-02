@@ -9,142 +9,187 @@
 <body>
     <div class="container">
 
-        <header>
-            <div class="title-section">
-                <span class="eyebrow">Data Loss Prevention</span>
-                <h1>Daily Report Generator</h1>
-                <p>Generate Daily DLP Reports for Scout Motors</p>
+        <!-- Top bar -->
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2 3 6v6c0 5 3.8 8.6 9 10 5.2-1.4 9-5 9-10V6z"/>
+                        <path d="m9 12 2 2 4-4"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>Daily Report Generator</h1>
+                    <p>Generate Daily DLP Reports for Scout Motors</p>
+                </div>
             </div>
 
-            <div class="progress-section">
-                <div class="progress-item" id="progressUpload">
+            <div class="stepper">
+                <div class="step-item" id="progressUpload">
                     <span class="dot">1</span>
-                    Upload Files
+                    <span class="step-label">Upload files</span>
                 </div>
-                <div class="progress-item" id="progressGenerate">
+                <div class="step-item" id="progressGenerate">
                     <span class="dot">2</span>
-                    Generate Report
+                    <span class="step-label">Generate report</span>
                 </div>
-                <div class="progress-item" id="progressCopy">
+                <div class="step-item" id="progressCopy">
                     <span class="dot">3</span>
-                    Copy to Outlook
+                    <span class="step-label">Copy to Outlook</span>
                 </div>
+            </div>
+
+            <div class="layout-toggle" role="group" aria-label="Layout">
+                <button id="layoutSplitBtn" class="layout-btn" type="button" aria-pressed="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="7" height="16" rx="1.5"/>
+                        <rect x="14" y="4" width="7" height="16" rx="1.5"/>
+                    </svg>
+                    Split
+                </button>
+                <button id="layoutStackedBtn" class="layout-btn" type="button" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="3" width="16" height="7" rx="1.5"/>
+                        <rect x="4" y="14" width="16" height="7" rx="1.5"/>
+                    </svg>
+                    Stacked
+                </button>
             </div>
         </header>
 
-        <!-- Upload Card -->
-        <section class="card">
-            <h2>Upload Files</h2>
+        <!-- Workspace -->
+        <div class="workspace">
 
-            <div class="upload-grid">
-                <!-- Cyera -->
-                <div class="upload-card">
-                    <h3>Cyera CSV <span class="required">*</span></h3>
-                    <label class="upload-box">
-                        <input id="cyeraFile" type="file" accept=".csv">
-                        <div class="upload-icon">
+            <!-- Upload / controls panel -->
+            <section class="panel upload-panel">
+                <h2>Upload files</h2>
+
+                <div class="file-list">
+
+                    <!-- Cyera -->
+                    <div class="file-row">
+                        <label class="file-drop">
+                            <input id="cyeraFile" type="file" accept=".csv">
+                            <span class="file-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <path d="M14 2v6h6"/>
+                                    <path d="M9 15h6M9 11h3"/>
+                                </svg>
+                            </span>
+                            <span class="file-text">
+                                <span class="file-title">Cyera CSV <span class="required">*</span></span>
+                                <small id="cyeraStatus">Waiting for CSV...</small>
+                            </span>
+                        </label>
+                        <button id="removeCyera" class="icon-btn" aria-label="Remove Cyera CSV">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                <path d="M14 2v6h6"/>
-                                <path d="M9 15h6M9 11h3"/>
+                                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/>
                             </svg>
-                        </div>
-                        <span>Click to Upload</span>
-                        <small id="cyeraStatus">Waiting for CSV...</small>
-                    </label>
-                    <button id="removeCyera" class="secondary-btn">Remove</button>
-                </div>
+                        </button>
+                    </div>
 
-                <!-- Purview -->
-                <div class="upload-card">
-                    <h3>Purview CSV <span class="required">*</span></h3>
-                    <label class="upload-box">
-                        <input id="purviewFile" type="file" accept=".csv">
-                        <div class="upload-icon">
+                    <!-- Purview -->
+                    <div class="file-row">
+                        <label class="file-drop">
+                            <input id="purviewFile" type="file" accept=".csv">
+                            <span class="file-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <path d="M14 2v6h6"/>
+                                    <path d="M9 15h6M9 11h3"/>
+                                </svg>
+                            </span>
+                            <span class="file-text">
+                                <span class="file-title">Purview CSV <span class="required">*</span></span>
+                                <small id="purviewStatus">Waiting for CSV...</small>
+                            </span>
+                        </label>
+                        <button id="removePurview" class="icon-btn" aria-label="Remove Purview CSV">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                <path d="M14 2v6h6"/>
-                                <path d="M9 15h6M9 11h3"/>
+                                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/>
                             </svg>
-                        </div>
-                        <span>Click to Upload</span>
-                        <small id="purviewStatus">Waiting for CSV...</small>
-                    </label>
-                    <button id="removePurview" class="secondary-btn">Remove</button>
-                </div>
+                        </button>
+                    </div>
 
-                <!-- Wiz -->
-                <div class="upload-card">
-                    <h3>Wiz Screenshot</h3>
-                    <label class="upload-box">
-                        <input id="wizImage" type="file" accept="image/*">
-                        <div class="upload-icon">
+                    <!-- Wiz -->
+                    <div class="file-row">
+                        <label class="file-drop">
+                            <input id="wizImage" type="file" accept="image/*">
+                            <span class="file-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                    <circle cx="9" cy="9" r="2"/>
+                                    <path d="m21 15-5-5L5 21"/>
+                                </svg>
+                            </span>
+                            <span class="file-text">
+                                <span class="file-title">Wiz screenshot <span class="optional">Optional</span></span>
+                                <small id="wizStatus">No screenshot</small>
+                            </span>
+                        </label>
+                        <button id="removeWiz" class="icon-btn" aria-label="Remove Wiz screenshot">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                                <circle cx="9" cy="9" r="2"/>
-                                <path d="m21 15-5-5L5 21"/>
+                                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/>
                             </svg>
-                        </div>
-                        <span>Optional</span>
-                        <small id="wizStatus">No Screenshot</small>
-                    </label>
-                    <button id="removeWiz" class="secondary-btn">Remove</button>
+                        </button>
+                    </div>
+
                 </div>
-            </div>
 
-            <!-- SharePoint -->
-            <div class="input-group">
-                <label>SharePoint Link (Optional)</label>
-                <input id="sharepointLink" type="text" placeholder="Paste SharePoint Link">
-            </div>
-
-            <!-- Generate -->
-            <button id="generateBtn" disabled>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M13 2 3 14h9l-1 8 10-12h-9z"/>
-                </svg>
-                Generate Report
-            </button>
-        </section>
-
-        <!-- Preview -->
-        <section class="card">
-            <div class="preview-header">
-                <h2>Report Preview</h2>
-                <div class="preview-actions">
-                    <button id="copyBtn" disabled>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="8" y="8" width="12" height="12" rx="2"/>
-                            <path d="M4 16V4a2 2 0 0 1 2-2h10"/>
-                        </svg>
-                        Copy for Outlook
-                    </button>
-                    <button id="excelBtn" disabled>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2"/>
-                            <path d="M3 9h18M9 21V9"/>
-                        </svg>
-                        Generate SharePoint Excel
-                    </button>
+                <div class="input-group">
+                    <label for="sharepointLink">SharePoint link (optional)</label>
+                    <input id="sharepointLink" type="text" placeholder="Paste SharePoint link">
                 </div>
-            </div>
 
-            <div id="preview"></div>
-
-            <div class="placeholder" id="previewPlaceholder">
-                <div class="placeholder-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="4" y="3" width="16" height="18" rx="2"/>
-                        <path d="M9 3v3h6V3M9 12h6M9 16h4"/>
+                <button id="generateBtn" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2 3 14h9l-1 8 10-12h-9z"/>
                     </svg>
-                </div>
-                <h3>No Report Generated</h3>
-                <p>Upload the required CSV files and click <strong>Generate Report</strong>.</p>
-            </div>
-        </section>
+                    Generate report
+                </button>
+            </section>
 
+            <!-- Preview panel -->
+            <section class="panel preview-panel">
+                <div class="preview-header">
+                    <h2>Report preview</h2>
+                    <div class="preview-actions">
+                        <button id="copyBtn" disabled>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="8" y="8" width="12" height="12" rx="2"/>
+                                <path d="M4 16V4a2 2 0 0 1 2-2h10"/>
+                            </svg>
+                            Copy for Outlook
+                        </button>
+                        <button id="excelBtn" disabled>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <path d="M3 9h18M9 21V9"/>
+                            </svg>
+                            Generate Excel
+                        </button>
+                    </div>
+                </div>
+
+                <div id="preview"></div>
+
+                <div class="placeholder" id="previewPlaceholder">
+                    <div class="placeholder-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="3" width="16" height="18" rx="2"/>
+                            <path d="M9 3v3h6V3M9 12h6M9 16h4"/>
+                        </svg>
+                    </div>
+                    <h3>No report generated</h3>
+                    <p>Upload the required CSV files and click <strong>Generate report</strong>.</p>
+                </div>
+            </section>
+
+        </div>
     </div>
 
+    <script src="js/layoutToggle.js"></script>
     <script src="libs/papaparse.min.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/validator.js"></script>
