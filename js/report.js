@@ -27,7 +27,7 @@ function generateReport(reportData) {
  
     <br>
  
-    <h2>Purview Alerts</h2>
+    <h2>Purview Alerts :</h2>
  
     {{PURVIEW_TABLE}}
  
@@ -113,7 +113,7 @@ function generateReport(reportData) {
  
     <br>
  
-    <h2>Cyera DLP</h2>
+    <h2>Cyera DLP :</h2>
  
 <p>
  
