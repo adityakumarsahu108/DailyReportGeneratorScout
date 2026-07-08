@@ -185,7 +185,7 @@ function generateReport(reportData) {
                 <td>None</td>
  
                 <td>NA</td>
-s
+
 <td>NA</td>
  
                 <td>NA</td>
