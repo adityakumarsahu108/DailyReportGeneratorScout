@@ -297,14 +297,16 @@ generateBtn.addEventListener("click", () => {
 Copy Report
 ==========================================
 */
-
-copyBtn.addEventListener("click", async () => {
+copyBtn.addEventListener("click", () => {
 
     const preview = document.getElementById("preview");
 
     if (!preview) {
 
-        alert("Preview not found.");
+        showToast(
+            "Error",
+            "Preview not found."
+        );
 
         return;
 
@@ -326,36 +328,68 @@ copyBtn.addEventListener("click", async () => {
 
         selection.removeAllRanges();
 
-        if (successful) {
+        if (!successful) {
 
-            copyBtn.innerHTML = "✔ Copied";
+            showToast(
+                "Error",
+                "Unable to copy report."
+            );
 
-            setTimeout(() => {
-
-                copyBtn.innerHTML = "Copy for Outlook";
-
-            }, 2000);
-
-        }
-
-        else {
-
-            alert("Copy failed.");
+            return;
 
         }
+
+        const to =
+            "eric.dimanno@scoutmotors.com";
+
+        const cc = [
+
+            "deen.balakumar@scoutmotors.com",
+
+            "dharani.venugopal@scoutmotors.com",
+
+            "ajay.singh@scoutmotors.com",
+
+            "rahul.rahul@scoutmotors.com",
+
+            "adityakumar.sahu@scoutmotors.com"
+
+        ].join(";");
+
+        const subject = generateSubject();
+
+        setTimeout(() => {
+
+            window.location.href =
+
+                `mailto:${to}?cc=${encodeURIComponent(cc)}&subject=${encodeURIComponent(subject)}`;
+
+        },300);
+
+        setProgress(3);
+
+        showToast(
+
+            "Outlook Opened",
+
+            "Report copied successfully.\nPress Ctrl + V in Outlook and click Send."
+
+        );
 
     }
 
-    catch (err) {
+    catch(err){
 
         console.error(err);
 
-        alert("Unable to copy.");
+        showToast(
+            "Error",
+            "Unable to copy report."
+        );
 
     }
 
-}
-);
+});
 excelBtn.addEventListener("click", () => {
 
     if (!window.currentReport) {

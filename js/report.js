@@ -10,14 +10,7 @@ function generateReport(reportData) {
  
     let html = `
 <div class="email-container">
- 
-    <div class="email-subject">
- 
-        <strong>{{SUBJECT}}</strong>
- 
-    </div>
- 
-    <br>
+
  
     <p>Hi Eric,</p>
  

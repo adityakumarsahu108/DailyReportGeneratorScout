@@ -710,3 +710,74 @@ body.stacked-layout .placeholder{
 
 .pivot-total{ background:#C0E6F5 !important; text-align:center; font-weight:bold; }
 .unassigned{ color:#666; font-style:italic; }
+/*==========================================
+Toast Notification
+==========================================*/
+
+.toast{
+
+    position:fixed;
+
+    bottom:25px;
+
+    right:25px;
+
+    width:340px;
+
+    background:#fff;
+
+    border-left:5px solid #0078D4;
+
+    border-radius:10px;
+
+    box-shadow:0 12px 30px rgba(0,0,0,.15);
+
+    display:flex;
+
+    gap:15px;
+
+    padding:18px;
+
+    transform:translateX(420px);
+
+    opacity:0;
+
+    transition:.35s ease;
+
+    z-index:9999;
+
+}
+
+.toast.show{
+
+    transform:translateX(0);
+
+    opacity:1;
+
+}
+
+.toast-icon{
+
+    font-size:28px;
+
+}
+
+.toast-title{
+
+    font-weight:700;
+
+    font-size:16px;
+
+    margin-bottom:6px;
+
+}
+
+.toast-message{
+
+    color:#555;
+
+    font-size:14px;
+
+    line-height:1.5;
+
+}

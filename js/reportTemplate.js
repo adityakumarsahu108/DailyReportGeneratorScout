@@ -9,13 +9,6 @@ Version 1.0
 const REPORT_TEMPLATE = `
 <div class="email-container">
 
-    <div class="email-subject">
-
-        <strong>{{SUBJECT}}</strong>
-
-    </div>
-
-    <br>
 
     <p>Hi Eric,</p>
 
