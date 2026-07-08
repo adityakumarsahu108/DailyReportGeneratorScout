@@ -1,0 +1,451 @@
+/*
+==========================================
+Settings Panel — Design Tokens
+==========================================
+Palette chosen for an internal security/reporting
+tool: a deeper, less "stock Microsoft" blue as the
+primary accent, cool neutral grays for structure,
+and the existing green kept for the saved-state
+confirmation since it already reads clearly as
+"success" against the rest of the palette.
+*/
+
+:root{
+
+    --settings-primary:#2E4FCE;
+
+    --settings-primary-hover:#22399E;
+
+    --settings-primary-soft:#EEF1FD;
+
+    --settings-text:#0F172A;
+
+    --settings-text-muted:#5B6472;
+
+    --settings-border:#E1E4EA;
+
+    --settings-surface:#FFFFFF;
+
+    --settings-surface-muted:#F7F8FA;
+
+    --settings-success:#16A34A;
+
+    --settings-danger:#DC2626;
+
+}
+
+/*==========================================
+Settings Overlay
+==========================================*/
+
+.settings-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(15,23,42,.45);
+
+    backdrop-filter:blur(3px);
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transition:.3s;
+
+    z-index:9999;
+
+}
+
+.settings-overlay.open{
+
+    opacity:1;
+
+    visibility:visible;
+
+}
+
+/*==========================================
+Panel
+==========================================*/
+
+.settings-panel{
+
+    width:420px;
+
+    max-width:95%;
+
+    height:100%;
+
+    background:var(--settings-surface);
+
+    box-shadow:-16px 0 40px rgba(15,23,42,.16);
+
+    transform:translateX(100%);
+
+    transition:.35s ease;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.settings-overlay.open .settings-panel{
+
+    transform:translateX(0);
+
+}
+
+/*==========================================
+Header
+==========================================*/
+
+.settings-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:22px 28px;
+
+    border-bottom:1px solid var(--settings-border);
+
+}
+
+.settings-header h2{
+
+    margin:0;
+
+    font-size:24px;
+
+    color:var(--settings-text);
+
+}
+
+#closeSettings{
+
+    background:none;
+
+    border:none;
+
+    font-size:28px;
+
+    line-height:1;
+
+    cursor:pointer;
+
+    color:var(--settings-text-muted);
+
+    border-radius:6px;
+
+    padding:4px 8px;
+
+    transition:.2s;
+
+}
+
+#closeSettings:hover{
+
+    color:var(--settings-primary);
+
+    background:var(--settings-primary-soft);
+
+}
+
+#closeSettings:focus-visible{
+
+    outline:2px solid var(--settings-primary);
+
+    outline-offset:2px;
+
+}
+
+/*==========================================
+Body
+==========================================*/
+
+.settings-body{
+
+    flex:1;
+
+    overflow:auto;
+
+    padding:25px;
+
+}
+
+.settings-body h3{
+
+    margin-top:0;
+
+    color:var(--settings-text);
+
+    font-size:18px;
+
+}
+
+.settings-body label{
+
+    display:block;
+
+    margin-top:16px;
+
+    margin-bottom:6px;
+
+    font-weight:600;
+
+    color:var(--settings-text-muted);
+
+}
+
+.settings-body textarea,
+
+.settings-body input[type=text],
+
+.settings-body input[type=time]{
+
+    width:100%;
+
+    padding:12px;
+
+    border:1px solid var(--settings-border);
+
+    border-radius:8px;
+
+    font-size:14px;
+
+    color:var(--settings-text);
+
+    background:var(--settings-surface);
+
+    box-sizing:border-box;
+
+    transition:.2s;
+
+}
+
+.settings-body textarea:focus,
+
+.settings-body input[type=text]:focus,
+
+.settings-body input[type=time]:focus{
+
+    outline:none;
+
+    border-color:var(--settings-primary);
+
+    box-shadow:0 0 0 3px var(--settings-primary-soft);
+
+}
+
+.settings-body textarea{
+
+    min-height:90px;
+
+    resize:vertical;
+
+}
+
+.settings-body hr{
+
+    margin:30px 0;
+
+    border:none;
+
+    border-top:1px solid var(--settings-border);
+
+}
+
+.time-row{
+
+    display:flex;
+
+    gap:15px;
+
+}
+
+.time-row>div{
+
+    flex:1;
+
+}
+
+/*==========================================
+Footer
+==========================================*/
+
+.settings-footer{
+
+    padding:18px 24px;
+
+    border-top:1px solid var(--settings-border);
+
+    background:var(--settings-surface-muted);
+
+    display:flex;
+
+    align-items:center;
+
+}
+
+#settingsSaved{
+
+    color:var(--settings-success);
+
+    font-weight:600;
+
+    opacity:0;
+
+    transition:.3s;
+
+}
+
+/*==========================================
+Settings Button
+==========================================*/
+
+.settings-btn{
+
+    margin-left:15px;
+
+    padding:10px 18px;
+
+    background:var(--settings-primary);
+
+    color:#FFFFFF;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    transition:.2s;
+
+}
+
+.settings-btn:hover{
+
+    background:var(--settings-primary-hover);
+
+}
+
+.settings-btn:focus-visible{
+
+    outline:2px solid var(--settings-primary);
+
+    outline-offset:2px;
+
+}
+
+/*==========================================
+Recipient Chips
+==========================================*/
+
+.chip-container{
+
+    min-height:52px;
+
+    border:1px solid var(--settings-border);
+
+    border-radius:8px;
+
+    padding:8px;
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+
+    align-items:center;
+
+    background:var(--settings-surface);
+
+    transition:.2s;
+
+}
+
+.chip-container:focus-within{
+
+    border-color:var(--settings-primary);
+
+    box-shadow:0 0 0 3px var(--settings-primary-soft);
+
+}
+
+.chip-container input{
+
+    border:none;
+
+    outline:none;
+
+    flex:1;
+
+    min-width:180px;
+
+    padding:8px;
+
+    font-size:14px;
+
+    background:transparent;
+
+    color:var(--settings-text);
+
+}
+
+.recipient-chip{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    background:var(--settings-primary);
+
+    color:#FFFFFF;
+
+    padding:7px 12px;
+
+    border-radius:18px;
+
+    font-size:13px;
+
+}
+
+.recipient-chip button{
+
+    border:none;
+
+    background:none;
+
+    color:#FFFFFF;
+
+    opacity:.8;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+    line-height:1;
+
+    transition:.2s;
+
+}
+
+.recipient-chip button:hover{
+
+    opacity:1;
+
+}

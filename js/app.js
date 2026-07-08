@@ -339,23 +339,9 @@ copyBtn.addEventListener("click", () => {
 
         }
 
-        const to =
-            "eric.dimanno@scoutmotors.com";
+        const to = getToRecipients().join(";");
 
-        const cc = [
-
-            "deen.balakumar@scoutmotors.com",
-
-            "dharani.venugopal@scoutmotors.com",
-
-            "ajay.singh@scoutmotors.com",
-
-            "rahul.rahul@scoutmotors.com",
-
-            "adityakumar.sahu@scoutmotors.com"
-
-        ].join(";");
-
+        const cc = getCCRecipients().join(";");
         const subject = generateSubject();
 
         setTimeout(() => {
@@ -364,7 +350,7 @@ copyBtn.addEventListener("click", () => {
 
                 `mailto:${to}?cc=${encodeURIComponent(cc)}&subject=${encodeURIComponent(subject)}`;
 
-        },300);
+        }, 300);
 
         setProgress(3);
 
@@ -378,7 +364,7 @@ copyBtn.addEventListener("click", () => {
 
     }
 
-    catch(err){
+    catch (err) {
 
         console.error(err);
 
