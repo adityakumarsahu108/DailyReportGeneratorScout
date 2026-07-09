@@ -303,7 +303,7 @@ copyBtn.addEventListener("click", () => {
 
     if (!preview) {
 
-        showToast(
+        showSavedIndicator(
             "Error",
             "Preview not found."
         );
@@ -330,7 +330,7 @@ copyBtn.addEventListener("click", () => {
 
         if (!successful) {
 
-            showToast(
+            showSavedIndicator(
                 "Error",
                 "Unable to copy report."
             );
@@ -338,9 +338,22 @@ copyBtn.addEventListener("click", () => {
             return;
 
         }
+        const toRecipients = getToRecipients();
 
-        const to = getToRecipients().join(";");
+        if (toRecipients.length === 0) {
 
+            alert(
+                "Please add at least one To recipient in Settings before sending the report."
+            );
+
+            document
+                .getElementById("settingsOverlay")
+                .classList.add("open");
+
+            return;
+        }
+
+        const to = toRecipients.join(";");
         const cc = getCCRecipients().join(";");
         const subject = generateSubject();
 
@@ -354,7 +367,7 @@ copyBtn.addEventListener("click", () => {
 
         setProgress(3);
 
-        showToast(
+        showSavedIndicator(
 
             "Outlook Opened",
 
@@ -368,7 +381,7 @@ copyBtn.addEventListener("click", () => {
 
         console.error(err);
 
-        showToast(
+        showSavedIndicator(
             "Error",
             "Unable to copy report."
         );
