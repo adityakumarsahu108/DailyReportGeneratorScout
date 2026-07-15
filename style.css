@@ -456,11 +456,9 @@ button:focus-visible{
 }
 
 #generateBtn:hover:not(:disabled){
-    box-shadow:var(--shadow-md);
-    transform:translateY(-2px);
+    background:linear-gradient(135deg, var(--primary-hover), var(--ink-800));
+    box-shadow:0 0 0 4px var(--primary-ring);
 }
-
-#generateBtn:active:not(:disabled){ transform:translateY(0); }
 
 #generateBtn:disabled{
     background:var(--border-strong);
@@ -469,49 +467,34 @@ button:focus-visible{
     box-shadow:none;
 }
 
-#copyBtn{
-    padding:11px 18px;
-    background:var(--success);
-    color:#fff;
+#copyBtn,
+#excelBtn{
+    padding:10px 16px;
+    background:var(--surface);
+    color:var(--text-secondary);
     font-weight:600;
     font-size:13.5px;
-    box-shadow:var(--shadow-sm);
+    border:1px solid var(--border-strong);
 }
 
 #copyBtn:hover:not(:disabled){
-    background:#0F6631;
-    box-shadow:var(--shadow-md);
-    transform:translateY(-2px);
-}
-
-#copyBtn:disabled{
-    background:var(--border-strong);
-    color:var(--text-muted);
-    cursor:not-allowed;
-    box-shadow:none;
-    transform:none;
-}
-
-#excelBtn{
-    background:linear-gradient(135deg, #23824F, #1A5C38);
-    color:#fff;
-    padding:11px 18px;
-    font-size:13.5px;
-    font-weight:600;
-    box-shadow:var(--shadow-sm);
+    border-color:var(--success);
+    color:var(--success);
+    background:var(--success-soft);
 }
 
 #excelBtn:hover:not(:disabled){
-    box-shadow:var(--shadow-md);
-    transform:translateY(-2px);
+    border-color:var(--primary);
+    color:var(--primary);
+    background:var(--primary-soft);
 }
 
+#copyBtn:disabled,
 #excelBtn:disabled{
-    background:var(--border-strong);
+    background:var(--surface-alt);
     color:var(--text-muted);
+    border-color:var(--border);
     cursor:not-allowed;
-    box-shadow:none;
-    transform:none;
 }
 
 /* ==========================================
@@ -724,13 +707,13 @@ Toast Notification
 
     width:340px;
 
-    background:#fff;
+    background:var(--surface);
 
-    border-left:5px solid #0078D4;
+    border-left:5px solid var(--primary);
 
-    border-radius:10px;
+    border-radius:var(--radius-md);
 
-    box-shadow:0 12px 30px rgba(0,0,0,.15);
+    box-shadow:var(--shadow-md);
 
     display:flex;
 
@@ -756,27 +739,36 @@ Toast Notification
 
 }
 
+.toast.toast-success{ border-left-color:var(--success); }
+.toast.toast-error{ border-left-color:var(--danger); }
+.toast.toast-warning{ border-left-color:var(--warning); }
+
 .toast-icon{
 
-    font-size:28px;
+    font-size:22px;
+    line-height:1;
 
 }
 
 .toast-title{
 
-    font-weight:700;
+    font-family:var(--font-display);
 
-    font-size:16px;
+    font-weight:600;
 
-    margin-bottom:6px;
+    font-size:15px;
+
+    color:var(--text-primary);
+
+    margin-bottom:4px;
 
 }
 
 .toast-message{
 
-    color:#555;
+    color:var(--text-secondary);
 
-    font-size:14px;
+    font-size:13.5px;
 
     line-height:1.5;
 
