@@ -392,6 +392,7 @@ copyBtn.addEventListener("click", () => {
     }
 
 });
+
 excelBtn.addEventListener("click", () => {
 
     if (!window.currentReport) {
