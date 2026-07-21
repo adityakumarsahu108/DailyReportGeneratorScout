@@ -5,7 +5,7 @@ app.js
 Version 1.0
 ==========================================
 */
-
+import { tracker } from "./tracker.js";
 const cyeraInput = document.getElementById("cyeraFile");
 const purviewInput = document.getElementById("purviewFile");
 const wizInput = document.getElementById("wizImage");
@@ -40,6 +40,7 @@ generateBtn.disabled = true;
 copyBtn.disabled = true;
 excelBtn.disabled = true;
 setProgress(0);
+await tracker.init();
 
 /*
 ==========================================
@@ -375,6 +376,8 @@ copyBtn.addEventListener("click", () => {
 
         );
 
+         tracker.track("open_outlook");
+
     }
 
     catch (err) {
@@ -408,5 +411,6 @@ excelBtn.addEventListener("click", () => {
         window.currentReport
 
     );
+     tracker.track("download_excel");
 
 });
