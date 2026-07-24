@@ -357,7 +357,7 @@ copyBtn.addEventListener("click", () => {
         const to = toRecipients.join(";");
         const cc = getCCRecipients().join(";");
         const subject = generateSubject();
-
+        tracker.track("open_outlook");
         setTimeout(() => {
 
             window.location.href =
@@ -376,7 +376,7 @@ copyBtn.addEventListener("click", () => {
 
         );
 
-         tracker.track("open_outlook");
+         
 
     }
 
