@@ -133,7 +133,7 @@ function generateReport(reportData) {
     {{WIZ_SECTION}}
  
     <br>
- 
+ <br>
     <h3>Tickets raised if any -</h3>
  
     <table class="ticket-table">
