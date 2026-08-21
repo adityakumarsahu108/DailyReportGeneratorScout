@@ -6,6 +6,10 @@ Version 1.0
 ==========================================
 */
 import { tracker } from "./tracker.js";
+import { buildDailyReportData } from "./dataBuilder.js";
+import {
+    sendDailyReport
+} from "./api.js";
 const cyeraInput = document.getElementById("cyeraFile");
 const purviewInput = document.getElementById("purviewFile");
 const wizInput = document.getElementById("wizImage");
@@ -249,19 +253,52 @@ Generate Report
 
 generateBtn.addEventListener("click", () => {
 
+    /*
+    ==========================================
+    NEW:
+    Build structured data first.
+    
+    This is independent from the Outlook
+    presentation.
+    ==========================================
+    */
+
+    const dailyReportData =
+        buildDailyReportData(
+            cyeraData,
+            purviewData
+        );
+
+
+    /*
+    ==========================================
+    Existing Pivot Logic
+    ==========================================
+    */
+
     const cyeraPivotObject =
         generateCyeraPivot(cyeraData);
 
     const purviewPivotObject =
         generatePurviewPivot(purviewData);
 
+
+    /*
+    ==========================================
+    Existing Outlook Report Object
+    ==========================================
+    */
+
     const report = {
 
-        subject: generateSubject(),
+        subject:
+            generateSubject(),
 
-        reportFrom: generateReportingWindow().from,
+        reportFrom:
+            generateReportingWindow().from,
 
-        reportTo: generateReportingWindow().to,
+        reportTo:
+            generateReportingWindow().to,
 
         sharePointLink:
             sharePointInput.value.trim(),
@@ -271,28 +308,102 @@ generateBtn.addEventListener("click", () => {
         purviewPivotObject,
 
         cyeraTable:
-            pivotToHTML(cyeraPivotObject),
+            pivotToHTML(
+                cyeraPivotObject
+            ),
 
         purviewTable:
-            pivotToHTML(purviewPivotObject),
+            pivotToHTML(
+                purviewPivotObject
+            ),
 
-        wizImage: wizImageURL
+        wizImage:
+            wizImageURL
 
     };
 
-    generatedHTML = generateReport(report);
+
+    /*
+    ==========================================
+    Existing Outlook HTML generation
+    ==========================================
+    */
+
+    generatedHTML =
+        generateReport(report);
 
     setPreview(generatedHTML);
 
-    window.currentReport = report;
+
+    /*
+    ==========================================
+    NEW:
+    Store structured data separately.
+    ==========================================
+    */
+
+    window.currentDailyReportData =
+        dailyReportData;
+
+    window.currentReport =
+        report;
+
+    /*
+    ==========================================
+    API Sync
+    ==========================================
+    */
+
+    sendDailyReport(dailyReportData)
+        .then(result => {
+
+            console.log(
+                "API Sync Result:",
+                result
+            );
+
+        })
+        .catch(error => {
+
+            console.error(
+                "API Sync Failed:",
+                error
+            );
+
+        });
+    /*
+    ==========================================
+    Existing button handling
+    ==========================================
+    */
 
     copyBtn.disabled = false;
     excelBtn.disabled = false;
 
     setProgress(2);
 
-});
 
+    /*
+    ==========================================
+    DEVELOPMENT DEBUG
+    ==========================================
+    */
+
+    console.log(
+        "Daily Report Data:",
+        dailyReportData
+    );
+
+    console.log(
+        "Daily Report JSON:",
+        JSON.stringify(
+            dailyReportData,
+            null,
+            2
+        )
+    );
+
+});
 /*
 ==========================================
 Copy Report
@@ -376,7 +487,7 @@ copyBtn.addEventListener("click", () => {
 
         );
 
-         
+
 
     }
 
@@ -412,6 +523,6 @@ excelBtn.addEventListener("click", () => {
         window.currentReport
 
     );
-     tracker.track("download_excel");
+    tracker.track("download_excel");
 
 });
