@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,293 +9,373 @@
     <link rel="icon" href="favicon-package/favicon.ico">
     <link rel="apple-touch-icon" href="favicon-package/apple-touch-icon.png">
     <link rel="manifest" href="favicon-package/site.webmanifest">
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#0d1512">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="settings.css">
 </head>
 
 <body>
-    <div class="container">
-
-        <!-- Top bar -->
-        <header class="topbar">
-            <div class="brand">
-                <div class="brand-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M12 2 3 6v6c0 5 3.8 8.6 9 10 5.2-1.4 9-5 9-10V6z" />
-                        <path d="m9 12 2 2 4-4" />
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+                        <path d="M15 2v5h5"/>
+                        <circle cx="9.5" cy="14.5" r="1.4" fill="currentColor" stroke="none"/>
                     </svg>
                 </div>
-                <div class="brand-text">
-                    <h1>Daily Report Generator</h1>
-                    <p>Generate Daily DLP Reports for Scout Motors</p>
+                <div>
+                    <strong>Report Studio</strong>
+                    <span>Scout Motors · DLP</span>
                 </div>
             </div>
 
-            <div class="layout-toggle" role="group" aria-label="Layout">
-                <button id="layoutSplitBtn" class="layout-btn" type="button" aria-pressed="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <rect x="3" y="4" width="7" height="16" rx="1.5" />
-                        <rect x="14" y="4" width="7" height="16" rx="1.5" />
-                    </svg>
-                    Split
-                </button>
-                <button id="layoutStackedBtn" class="layout-btn" type="button" aria-pressed="false">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <rect x="4" y="3" width="16" height="7" rx="1.5" />
-                        <rect x="4" y="14" width="16" height="7" rx="1.5" />
-                    </svg>
-                    Stacked
-                </button>
-            </div>
-
-            <button id="settingsBtn" class="settings-btn" type="button" aria-haspopup="dialog">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="3" />
-                    <path
-                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                </svg>
-                Settings
-            </button>
-        </header>
-
-        <!-- Progress -->
-        <div class="progress-strip">
-            <div class="step-item" id="progressUpload">
-                <span class="dot">1</span>
-                <span class="step-label">Upload files</span>
-            </div>
-            <div class="step-item" id="progressGenerate">
-                <span class="dot">2</span>
-                <span class="step-label">Generate report</span>
-            </div>
-            <div class="step-item" id="progressCopy">
-                <span class="dot">3</span>
-                <span class="step-label">Copy to Outlook</span>
-            </div>
-        </div>
-
-        <!-- Workspace -->
-        <div class="workspace">
-
-            <!-- Upload / controls panel -->
-            <section class="panel upload-panel">
-                <h2>Upload files</h2>
-
-                <div class="file-list">
-
-                    <!-- Cyera -->
-                    <div class="file-row">
-                        <label class="file-drop">
-                            <input id="cyeraFile" type="file" accept=".csv">
-                            <span class="file-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                    <path d="M14 2v6h6" />
-                                    <path d="M9 15h6M9 11h3" />
-                                </svg>
-                            </span>
-                            <span class="file-text">
-                                <span class="file-title">Cyera CSV <span class="required">*</span></span>
-                                <small id="cyeraStatus">Waiting for CSV...</small>
-                            </span>
-                        </label>
-                        <button id="removeCyera" class="icon-btn" aria-label="Remove Cyera CSV">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path
-                                    d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    <!-- Purview -->
-                    <div class="file-row">
-                        <label class="file-drop">
-                            <input id="purviewFile" type="file" accept=".csv">
-                            <span class="file-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                    <path d="M14 2v6h6" />
-                                    <path d="M9 15h6M9 11h3" />
-                                </svg>
-                            </span>
-                            <span class="file-text">
-                                <span class="file-title">Purview CSV <span class="required">*</span></span>
-                                <small id="purviewStatus">Waiting for CSV...</small>
-                            </span>
-                        </label>
-                        <button id="removePurview" class="icon-btn" aria-label="Remove Purview CSV">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path
-                                    d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    <!-- Wiz -->
-                    <div class="file-row">
-                        <label class="file-drop">
-                            <input id="wizImage" type="file" accept="image/*">
-                            <span class="file-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                                    <circle cx="9" cy="9" r="2" />
-                                    <path d="m21 15-5-5L5 21" />
-                                </svg>
-                            </span>
-                            <span class="file-text">
-                                <span class="file-title">Wiz screenshot <span class="optional">Optional</span></span>
-                                <small id="wizStatus">No screenshot</small>
-                            </span>
-                        </label>
-                        <button id="removeWiz" class="icon-btn" aria-label="Remove Wiz screenshot">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path
-                                    d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6" />
-                            </svg>
-                        </button>
-                    </div>
-
-                </div>
-
-                <div class="input-group">
-                    <label for="sharepointLink">SharePoint link (optional)</label>
-                    <input id="sharepointLink" type="text" placeholder="Paste SharePoint link">
-                </div>
-
-                <button id="generateBtn" disabled>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M13 2 3 14h9l-1 8 10-12h-9z" />
-                    </svg>
-                    Generate report
-                </button>
-            </section>
-
-            <!-- Preview panel -->
-            <section class="panel preview-panel">
-                <div class="preview-header">
-                    <h2>Report preview</h2>
-                    <div class="preview-actions">
-                        <button id="copyBtn" disabled>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="8" y="8" width="12" height="12" rx="2" />
-                                <path d="M4 16V4a2 2 0 0 1 2-2h10" />
-                            </svg>
-                            Send Via Outlook
-                        </button>
-                        <button id="excelBtn" disabled>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="3" width="18" height="18" rx="2" />
-                                <path d="M3 9h18M9 21V9" />
-                            </svg>
-                            Generate Excel
-                        </button>
-                    </div>
-                </div>
-
-                <div id="preview"></div>
-
-                <div class="placeholder" id="previewPlaceholder">
-                    <div class="placeholder-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="4" y="3" width="16" height="18" rx="2" />
-                            <path d="M9 3v3h6V3M9 12h6M9 16h4" />
+            <nav class="sidebar-nav" aria-label="Application navigation">
+                <div class="nav-section-label">Workflow</div>
+                <a class="nav-item active" href="#workspace">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path d="M4 5h16M4 12h10M4 19h16"/>
+                            <circle cx="18" cy="12" r="2"/>
                         </svg>
+                    </span>
+                    Report builder
+                </a>
+                <!-- <a class="nav-item" href="#preview">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <rect x="4" y="3" width="16" height="18" rx="2"/>
+                            <path d="M8 8h8M8 12h8M8 16h5"/>
+                        </svg>
+                    </span>
+                    Preview
+                </a> -->
+
+                <div class="nav-section-label nav-section-spacer">Tools</div>
+                <button class="nav-item nav-button" id="settingsBtn" type="button" aria-haspopup="dialog">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                    </span>
+                    Settings
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="security-badge">
+                    <span class="security-dot"></span>
+                    <div>
+                        <strong>Local processing</strong>
+                        <small>Your files stay in this session</small>
                     </div>
-                    <h3>No report yet</h3>
-                    <p>Add the Cyera and Purview CSVs, then select <strong>Generate report</strong>.</p>
+                </div>
+                <div class="version-label">Report Studio · v2.0</div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <h1>Daily Report Generator</h1>
+                    <p>Turn today's DLP exports into a report that's ready for Outlook.</p>
+                </div>
+
+                <div class="topbar-actions">
+                    <div class="layout-toggle" role="group" aria-label="Workspace layout">
+                        <button id="layoutSplitBtn" class="layout-btn active" type="button" aria-pressed="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <rect x="3" y="4" width="7" height="16" rx="1.5"/>
+                                <rect x="14" y="4" width="7" height="16" rx="1.5"/>
+                            </svg>
+                            Split
+                        </button>
+                        <button id="layoutStackedBtn" class="layout-btn" type="button" aria-pressed="false">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <rect x="4" y="3" width="16" height="7" rx="1.5"/>
+                                <rect x="4" y="14" width="16" height="7" rx="1.5"/>
+                            </svg>
+                            Stacked
+                        </button>
+                    </div>
+                    <button class="mobile-settings" type="button" onclick="document.getElementById('settingsBtn').click()" aria-label="Open settings">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82V15z"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <section class="progress-strip" aria-label="Report progress">
+                <div class="step-item active" id="progressUpload">
+                    <span class="dot">1</span>
+                    <div>
+                        <strong>Prepare</strong>
+                        <small>Upload source files</small>
+                    </div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-item" id="progressGenerate">
+                    <span class="dot">2</span>
+                    <div>
+                        <strong>Generate</strong>
+                        <small>Build the report</small>
+                    </div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step-item" id="progressCopy">
+                    <span class="dot">3</span>
+                    <div>
+                        <strong>Send</strong>
+                        <small>Copy to Outlook</small>
+                    </div>
+                </div>
+                <div class="progress-state">
+                    <span class="status-pulse"></span>
+                    <span id="workflowStatus">Waiting for files</span>
                 </div>
             </section>
-            <div id="toast" class="toast">
 
-                <div class="toast-icon">✅</div>
+            <section class="workspace" id="workspace">
+                <div class="builder-column">
+                    <section class="panel source-panel intake-panel">
+                        <div class="panel-heading">
+                            <div>
+                                <h2>Source files</h2>
+                                <p>Upload the required exports. Wiz is optional.</p>
+                            </div>
+                            <span class="required-badge">2 required</span>
+                        </div>
 
-                <div class="toast-content">
+                        <div class="file-list">
+                            <div class="file-row" id="cyeraRow">
+                                <label class="file-drop">
+                                    <input id="cyeraFile" type="file" accept=".csv">
+                                    <span class="file-icon csv-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                            <path d="M14 2v6h6M8 13h8M8 17h5"/>
+                                        </svg>
+                                    </span>
+                                    <span class="file-text">
+                                        <span class="file-title">Cyera export <b class="required">*</b></span>
+                                        <small id="cyeraStatus">Waiting for CSV…</small>
+                                    </span>
+                                    <span class="upload-arrow">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                            <path d="M12 16V4M7 9l5-5 5 5M5 20h14"/>
+                                        </svg>
+                                    </span>
+                                </label>
+                                <button id="removeCyera" class="icon-btn" type="button" aria-label="Remove Cyera CSV">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/>
+                                    </svg>
+                                </button>
+                            </div>
 
-                    <div class="toast-title"></div>
+                            <div class="file-row" id="purviewRow">
+                                <label class="file-drop">
+                                    <input id="purviewFile" type="file" accept=".csv">
+                                    <span class="file-icon csv-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                            <path d="M14 2v6h6M8 13h8M8 17h5"/>
+                                        </svg>
+                                    </span>
+                                    <span class="file-text">
+                                        <span class="file-title">Purview export <b class="required">*</b></span>
+                                        <small id="purviewStatus">Waiting for CSV…</small>
+                                    </span>
+                                    <span class="upload-arrow">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                            <path d="M12 16V4M7 9l5-5 5 5M5 20h14"/>
+                                        </svg>
+                                    </span>
+                                </label>
+                                <button id="removePurview" class="icon-btn" type="button" aria-label="Remove Purview CSV">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/>
+                                    </svg>
+                                </button>
+                            </div>
 
-                    <div class="toast-message"></div>
+                            <div class="file-row optional-row" id="wizRow">
+                                <label class="file-drop">
+                                    <input id="wizImage" type="file" accept="image/*">
+                                    <span class="file-icon image-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                            <circle cx="9" cy="9" r="2"/>
+                                            <path d="m21 15-5-5L5 21"/>
+                                        </svg>
+                                    </span>
+                                    <span class="file-text">
+                                        <span class="file-title">Wiz screenshot <b class="optional">Optional</b></span>
+                                        <small id="wizStatus">No screenshot</small>
+                                    </span>
+                                    <span class="upload-arrow">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                            <path d="M12 16V4M7 9l5-5 5 5M5 20h14"/>
+                                        </svg>
+                                    </span>
+                                </label>
+                                <button id="removeWiz" class="icon-btn" type="button" aria-label="Remove Wiz screenshot">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
 
+                        <div class="source-divider"></div>
+
+                        <div class="input-group">
+                            <div class="input-label-row">
+                                <label for="sharepointLink">SharePoint link</label>
+                                <span>Optional</span>
+                            </div>
+                            <div class="input-with-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <path d="M10 13a5 5 0 0 0 7.07.07l2-2A5 5 0 0 0 12 4"/>
+                                    <path d="M14 11a5 5 0 0 0-7.07-.07l-2 2A5 5 0 0 0 12 20"/>
+                                </svg>
+                                <input id="sharepointLink" type="text" placeholder="Paste SharePoint report link">
+                            </div>
+                        </div>
+
+                        <button id="generateBtn" disabled>
+                            <span class="button-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M13 2 3 14h9l-1 8 10-12h-9z"/>
+                                </svg>
+                            </span>
+                            Generate report
+                        </button>
+
+                        <div class="helper-note">
+                            <span class="helper-icon">i</span>
+                            <span>Cyera and Purview CSVs must be valid before the report can be generated.</span>
+                        </div>
+                    </section>
+
+                    <section class="quick-info">
+                        <div class="quick-info-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                <path d="M9 12l2 2 4-4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <strong>Built for the daily DLP workflow</strong>
+                            <p>Validate, generate, then send. Same three steps, every day.</p>
+                        </div>
+                    </section>
                 </div>
 
+                <section class="panel preview-panel readout-panel" id="previewPanel">
+                   
+                    <div class="preview-header">
+                        <div class="panel-heading preview-heading">
+                            <div>
+                                <h2>Report preview</h2>
+                                <p>Review the generated report before sending it.</p>
+                            </div>
+                            <!-- <span class="preview-ready-badge" id="previewState">Not generated</span> -->
+                        </div>
+
+                        <div class="preview-actions">
+                            <button id="excelBtn" class="secondary-action" disabled>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                    <path d="M3 9h18M9 21V9"/>
+                                </svg>
+                                Export Excel
+                            </button>
+                            <button id="copyBtn" class="primary-action" disabled>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <rect x="8" y="8" width="12" height="12" rx="2"/>
+                                    <path d="M4 16V4a2 2 0 0 1 2-2h10"/>
+                                </svg>
+                                Send via Outlook
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="preview-meta">
+                        <span><i class="meta-dot"></i> Live preview</span>
+                        <span>Generated report appears here</span>
+                    </div>
+
+                    <div id="preview"></div>
+
+                    <div class="placeholder" id="previewPlaceholder">
+                        <div class="placeholder-visual">
+                            <div class="placeholder-sheet">
+                                <span></span><span></span><span></span><span></span>
+                            </div>
+                            <div class="placeholder-spark">✦</div>
+                        </div>
+                        <h3>Your report starts here</h3>
+                        <p>Add the two required exports, then generate the report to fill this panel.</p>
+                        <div class="placeholder-hint">
+                            <span>1</span> Upload <span>2</span> Generate <span>3</span> Send
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <footer class="app-footer">
+                <span>Daily Report Generator. Built for repeatable DLP reporting.</span>
+            </footer>
+
+            <div id="toast" class="toast">
+                <div class="toast-icon">✓</div>
+                <div class="toast-content">
+                    <div class="toast-title"></div>
+                    <div class="toast-message"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="settingsOverlay" class="settings-overlay">
+        <div id="settingsPanel" class="settings-panel">
+            <div class="settings-header">
+                <div>
+                    <h2>Report settings</h2>
+                </div>
+                <button id="closeSettings" type="button" aria-label="Close settings">&times;</button>
             </div>
 
+            <div class="settings-body">
+                <p class="settings-intro">Choose who receives the generated report. Changes are saved automatically.</p>
+
+                <h3>Email routing</h3>
+
+                <label for="toInput">To</label>
+                <div id="toContainer" class="chip-container">
+                    <input id="toInput" type="email" placeholder="Add recipient and press Enter">
+                </div>
+
+                <label for="ccInput">CC</label>
+                <div id="ccContainer" class="chip-container">
+                    <input id="ccInput" type="email" placeholder="Add recipient and press Enter">
+                </div>
+            </div>
+
+            <div class="settings-footer">
+                <span id="settingsSaved">✓ All changes saved</span>
+            </div>
         </div>
     </div>
-<!-- ==============================
-Settings Panel
-=============================== -->
-
-<div id="settingsOverlay" class="settings-overlay">
-
-    <div id="settingsPanel" class="settings-panel">
-
-        <div class="settings-header">
-
-            <h2>⚙ Settings</h2>
-
-            <button id="closeSettings">&times;</button>
-
-        </div>
-
-        <div class="settings-body">
-
-            <h3>Email Configuration</h3>
-
-            <label>To</label>
-
-<div id="toContainer" class="chip-container">
-
-    <input
-        id="toInput"
-        type="email"
-        placeholder="Add recipient and press Enter">
-
-</div>
-
-           <label>CC</label>
-
-<div id="ccContainer" class="chip-container">
-
-    <input
-        id="ccInput"
-        type="email"
-        placeholder="Add recipient and press Enter">
-
-</div>
-
-
-        <div class="settings-footer">
-
-    <span id="settingsSaved">
-
-        ✔ All changes saved
-
-    </span>
-
-</div>
-
-    </div>
-
-</div>
 
     <script src="js/layoutToggle.js"></script>
-   <script type="module" src="js/test.js"></script>
+    <script type="module" src="js/test.js"></script>
     <script src="libs/papaparse.min.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/validator.js"></script>
@@ -307,7 +386,6 @@ Settings Panel
     <script src="js/excelGenerator.js"></script>
     <script src="js/wordGenerator.js"></script>
     <script type="module" src="js/app.js"></script>
-     <script src="js/settings.js"></script>
+    <script src="js/settings.js"></script>
 </body>
-
 </html>

@@ -1,463 +1,971 @@
 /*
 ==========================================
-Settings Panel — Design Tokens
+Settings Panel — Security Intelligence UI
 ==========================================
-No separate palette here on purpose. The settings
-panel is part of the same product as the report
-generator, so it borrows every color directly from
-style.css's tokens (--primary, --success, etc.)
-rather than defining its own — that's what was
-making the panel look like a different app.
+Premium dark SOC-style palette.
+
+BLUE   = primary interaction
+CYAN   = intelligence / information
+GREEN  = healthy / saved
+AMBER  = warning / attention
+RED    = danger / error
 */
 
-:root{
+:root {
 
-    --settings-primary:var(--primary);
+    /* ==========================================
+       Core Settings Tokens
+       ========================================== */
 
-    --settings-primary-hover:var(--primary-hover);
+    --settings-primary: #4da3ff;
+    --settings-primary-hover: #72b8ff;
+    --settings-primary-soft: rgba(77, 163, 255, .12);
+    --settings-primary-ring: rgba(77, 163, 255, .22);
 
-    --settings-primary-soft:var(--primary-soft);
+    --settings-intelligence: #36c9d6;
+    --settings-intelligence-soft: rgba(54, 201, 214, .12);
 
-    --settings-text:var(--text-primary);
+    --settings-text: #f2f6fb;
+    --settings-text-muted: #9aaac0;
+    --settings-text-subtle: #687a91;
 
-    --settings-text-muted:var(--text-secondary);
+    --settings-border: #263752;
+    --settings-border-soft: #1b2a40;
 
-    --settings-border:var(--border);
+    --settings-surface: #0e1930;
+    --settings-surface-raised: #13223b;
+    --settings-surface-hover: #182b48;
+    --settings-surface-muted: #0b1527;
 
-    --settings-surface:var(--surface);
+    --settings-success: #4fd08a;
+    --settings-success-soft: rgba(79, 208, 138, .12);
 
-    --settings-surface-muted:var(--surface-alt);
+    --settings-warning: #eec565;
+    --settings-warning-soft: rgba(238, 197, 101, .12);
 
-    --settings-success:var(--success);
+    --settings-danger: #ef7186;
+    --settings-danger-soft: rgba(239, 113, 134, .12);
 
-    --settings-danger:var(--danger);
+    --settings-chip-text: #06111f;
 
+    --settings-shadow:
+        -24px 0 70px rgba(0, 0, 0, .42);
+
+    --settings-input-shadow:
+        0 0 0 3px var(--settings-primary-ring);
 }
+
 
 /*==========================================
 Settings Overlay
 ==========================================*/
 
-.settings-overlay{
+.settings-overlay {
 
-    position:fixed;
+    position: fixed;
+    inset: 0;
 
-    inset:0;
+    background:
+        rgba(3, 9, 18, .68);
 
-    background:rgba(15,23,42,.45);
+    backdrop-filter:
+        blur(6px);
 
-    backdrop-filter:blur(3px);
+    -webkit-backdrop-filter:
+        blur(6px);
 
-    display:flex;
+    display: flex;
+    justify-content: flex-end;
 
-    justify-content:flex-end;
+    opacity: 0;
+    visibility: hidden;
 
-    opacity:0;
+    transition:
+        opacity .25s ease,
+        visibility .25s ease;
 
-    visibility:hidden;
+    z-index: 9999;
+}
 
-    transition:.3s;
 
-    z-index:9999;
+.settings-overlay.open {
+
+    opacity: 1;
+    visibility: visible;
 
 }
 
-.settings-overlay.open{
-
-    opacity:1;
-
-    visibility:visible;
-
-}
 
 /*==========================================
-Panel
+Settings Panel
 ==========================================*/
 
-.settings-panel{
+.settings-panel {
 
-    width:420px;
+    width: 430px;
+    max-width: 95vw;
+    height: 100%;
 
-    max-width:95%;
+    background:
+        linear-gradient(
+            180deg,
+            #101c33 0%,
+            #0e1930 55%,
+            #0b1628 100%
+        );
 
-    height:100%;
+    border-left:
+        1px solid #2b3d59;
 
-    background:var(--settings-surface);
+    box-shadow:
+        var(--settings-shadow);
 
-    box-shadow:-16px 0 40px rgba(15,23,42,.16);
+    transform:
+        translateX(100%);
 
-    transform:translateX(100%);
+    transition:
+        transform .32s cubic-bezier(.22,.61,.36,1);
 
-    transition:.35s ease;
-
-    display:flex;
-
-    flex-direction:column;
+    display: flex;
+    flex-direction: column;
 
 }
 
-.settings-overlay.open .settings-panel{
 
-    transform:translateX(0);
+.settings-overlay.open .settings-panel {
+
+    transform:
+        translateX(0);
 
 }
+
 
 /*==========================================
 Header
 ==========================================*/
 
-.settings-header{
+.settings-header {
 
-    display:flex;
+    position: relative;
 
-    justify-content:space-between;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-    align-items:center;
+    padding: 23px 26px 21px;
 
-    padding:22px 28px;
+    border-bottom:
+        1px solid var(--settings-border-soft);
 
-    border-bottom:1px solid var(--settings-border);
-
-}
-
-.settings-header h2{
-
-    margin:0;
-
-    font-size:24px;
-
-    color:var(--settings-text);
+    background:
+        rgba(255,255,255,.015);
 
 }
 
-#closeSettings{
 
-    background:none;
+/* subtle blue intelligence line */
 
-    border:none;
+.settings-header::after {
 
-    font-size:28px;
+    content: "";
 
-    line-height:1;
+    position: absolute;
 
-    cursor:pointer;
+    left: 26px;
+    right: 26px;
+    bottom: -1px;
 
-    color:var(--settings-text-muted);
+    height: 1px;
 
-    border-radius:6px;
-
-    padding:4px 8px;
-
-    transition:.2s;
-
-}
-
-#closeSettings:hover{
-
-    color:var(--settings-primary);
-
-    background:var(--settings-primary-soft);
+    background:
+        linear-gradient(
+            90deg,
+            rgba(77,163,255,.65),
+            rgba(54,201,214,.18),
+            transparent
+        );
 
 }
 
-#closeSettings:focus-visible{
 
-    outline:2px solid var(--settings-primary);
+.settings-header h2 {
 
-    outline-offset:2px;
+    margin: 4px 0 0;
+
+    font-family:
+        var(--font-display);
+
+    font-size: 21px;
+
+    font-weight: 600;
+
+    letter-spacing: -.025em;
+
+    color:
+        var(--settings-text);
 
 }
+
+
+/*==========================================
+Close Button
+==========================================*/
+
+#closeSettings {
+
+    width: 34px;
+    height: 34px;
+
+    display: grid;
+    place-items: center;
+
+    background:
+        transparent;
+
+    border:
+        1px solid transparent;
+
+    color:
+        var(--settings-text-subtle);
+
+    border-radius:
+        9px;
+
+    padding: 0;
+
+    font-size: 25px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        .18s ease;
+
+}
+
+
+#closeSettings:hover {
+
+    color:
+        var(--settings-text);
+
+    border-color:
+        var(--settings-border);
+
+    background:
+        var(--settings-surface-hover);
+
+}
+
+
+#closeSettings:focus-visible {
+
+    outline:
+        2px solid var(--settings-primary);
+
+    outline-offset:
+        2px;
+
+}
+
 
 /*==========================================
 Body
 ==========================================*/
 
-.settings-body{
+.settings-body {
 
-    flex:1;
+    flex: 1;
 
-    overflow:auto;
+    overflow: auto;
 
-    padding:25px;
-
-}
-
-.settings-body h3{
-
-    margin-top:0;
-
-    color:var(--settings-text);
-
-    font-size:18px;
+    padding:
+        26px;
 
 }
 
-.settings-body label{
 
-    display:block;
+/*==========================================
+Intro
+==========================================*/
 
-    margin-top:16px;
+.settings-intro {
 
-    margin-bottom:6px;
+    margin:
+        0 0 26px;
 
-    font-weight:600;
+    padding:
+        12px 13px;
 
-    color:var(--settings-text-muted);
+    border:
+        1px solid var(--settings-border-soft);
+
+    border-radius:
+        9px;
+
+    color:
+        var(--settings-text-muted);
+
+    background:
+        rgba(255,255,255,.025);
+
+    font-size:
+        11px;
+
+    line-height:
+        1.55;
 
 }
+
+
+/*==========================================
+Section Heading
+==========================================*/
+
+.settings-body h3 {
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    margin:
+        0 0 18px;
+
+    font-family:
+        var(--font-display);
+
+    font-size:
+        14px;
+
+    font-weight:
+        600;
+
+    color:
+        var(--settings-text);
+
+}
+
+
+/* intelligence indicator */
+
+.settings-body h3::before {
+
+    content: "";
+
+    width: 7px;
+    height: 7px;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--settings-intelligence);
+
+    box-shadow:
+        0 0 0 4px
+        var(--settings-intelligence-soft);
+
+}
+
+
+/*==========================================
+Labels
+==========================================*/
+
+.settings-body label {
+
+    display:
+        block;
+
+    margin:
+        17px 0 7px;
+
+    color:
+        var(--settings-text-muted);
+
+    font-family:
+        var(--font-mono);
+
+    font-size:
+        10px;
+
+    font-weight:
+        500;
+
+    letter-spacing:
+        .02em;
+
+}
+
+
+/*==========================================
+Inputs
+==========================================*/
 
 .settings-body textarea,
-
 .settings-body input[type=text],
+.settings-body input[type=time] {
 
-.settings-body input[type=time]{
+    width:
+        100%;
 
-    width:100%;
+    min-height:
+        43px;
 
-    padding:12px;
+    padding:
+        11px 12px;
 
-    border:1px solid var(--settings-border);
+    border:
+        1px solid var(--settings-border);
 
-    border-radius:8px;
+    border-radius:
+        9px;
 
-    font-size:14px;
+    box-sizing:
+        border-box;
 
-    color:var(--settings-text);
+    outline:
+        none;
 
-    background:var(--settings-surface);
+    color:
+        var(--settings-text);
 
-    box-sizing:border-box;
+    background:
+        var(--settings-surface-muted);
 
-    transition:.2s;
+    font-size:
+        12px;
+
+    transition:
+        border-color .18s ease,
+        background .18s ease,
+        box-shadow .18s ease;
 
 }
+
+
+.settings-body textarea::placeholder,
+.settings-body input[type=text]::placeholder,
+.settings-body input[type=time]::placeholder {
+
+    color:
+        var(--settings-text-subtle);
+
+}
+
+
+.settings-body textarea:hover,
+.settings-body input[type=text]:hover,
+.settings-body input[type=time]:hover {
+
+    border-color:
+        #334965;
+
+}
+
 
 .settings-body textarea:focus,
-
 .settings-body input[type=text]:focus,
+.settings-body input[type=time]:focus {
 
-.settings-body input[type=time]:focus{
+    border-color:
+        var(--settings-primary);
 
-    outline:none;
+    background:
+        var(--settings-surface);
 
-    border-color:var(--settings-primary);
-
-    box-shadow:0 0 0 3px var(--settings-primary-soft);
-
-}
-
-.settings-body textarea{
-
-    min-height:90px;
-
-    resize:vertical;
+    box-shadow:
+        var(--settings-input-shadow);
 
 }
 
-.settings-body hr{
 
-    margin:30px 0;
+.settings-body textarea {
 
-    border:none;
+    min-height:
+        95px;
 
-    border-top:1px solid var(--settings-border);
-
-}
-
-.time-row{
-
-    display:flex;
-
-    gap:15px;
+    resize:
+        vertical;
 
 }
 
-.time-row>div{
 
-    flex:1;
+/*==========================================
+Divider
+==========================================*/
+
+.settings-body hr {
+
+    margin:
+        28px 0;
+
+    border:
+        none;
+
+    border-top:
+        1px solid var(--settings-border-soft);
 
 }
+
+
+/*==========================================
+Time Row
+==========================================*/
+
+.time-row {
+
+    display:
+        flex;
+
+    gap:
+        12px;
+
+}
+
+
+.time-row > div {
+
+    flex:
+        1;
+
+}
+
 
 /*==========================================
 Footer
 ==========================================*/
 
-.settings-footer{
+.settings-footer {
 
-    padding:18px 24px;
+    min-height:
+        58px;
 
-    border-top:1px solid var(--settings-border);
+    padding:
+        14px 25px;
 
-    background:var(--settings-surface-muted);
+    display:
+        flex;
 
-    display:flex;
+    align-items:
+        center;
 
-    align-items:center;
+    border-top:
+        1px solid var(--settings-border-soft);
+
+    background:
+        rgba(6,14,28,.72);
+
+}
+
+
+#settingsSaved {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    gap:
+        7px;
+
+    color:
+        var(--settings-success);
+
+    font-family:
+        var(--font-mono);
+
+    font-size:
+        10px;
+
+    font-weight:
+        500;
+
+    opacity:
+        0;
+
+    transition:
+        opacity .25s ease;
 
 }
 
-#settingsSaved{
 
-    color:var(--settings-success);
+#settingsSaved::before {
 
-    font-weight:600;
+    content:
+        "✓";
 
-    opacity:0;
+    width:
+        17px;
 
-    transition:.3s;
+    height:
+        17px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--settings-success-soft);
 
 }
+
 
 /*==========================================
 Settings Button
 ==========================================*/
 
-.settings-btn svg{ width:14px; height:14px; }
+.settings-btn svg {
 
-.settings-btn{
+    width:
+        14px;
 
-    display:flex;
-
-    align-items:center;
-
-    gap:7px;
-
-    padding:9px 14px;
-
-    background:rgba(255,255,255,.06);
-
-    border:1px solid rgba(255,255,255,.14);
-
-    color:var(--text-on-dark-muted);
-
-    border-radius:100px;
-
-    cursor:pointer;
-
-    font-weight:600;
-
-    font-size:12.5px;
-
-    transition:.2s;
+    height:
+        14px;
 
 }
 
-.settings-btn:hover{
 
-    color:#fff;
+.settings-btn {
 
-    border-color:rgba(255,255,255,.28);
+    display:
+        inline-flex;
 
-    background:rgba(255,255,255,.1);
+    align-items:
+        center;
+
+    gap:
+        7px;
+
+    padding:
+        8px 13px;
+
+    border:
+        1px solid var(--settings-border);
+
+    border-radius:
+        9px;
+
+    background:
+        var(--settings-surface);
+
+    color:
+        var(--settings-text-muted);
+
+    cursor:
+        pointer;
+
+    font-size:
+        11.5px;
+
+    font-weight:
+        600;
+
+    transition:
+        .18s ease;
 
 }
 
-.settings-btn:focus-visible{
 
-    outline:2px solid var(--accent);
+.settings-btn:hover {
 
-    outline-offset:2px;
+    color:
+        var(--settings-text);
+
+    border-color:
+        #3a506e;
+
+    background:
+        var(--settings-surface-hover);
 
 }
+
+
+.settings-btn:focus-visible {
+
+    outline:
+        2px solid var(--settings-primary);
+
+    outline-offset:
+        2px;
+
+}
+
 
 /*==========================================
 Recipient Chips
 ==========================================*/
 
-.chip-container{
+.chip-container {
 
-    min-height:52px;
+    min-height:
+        49px;
 
-    border:1px solid var(--settings-border);
+    display:
+        flex;
 
-    border-radius:8px;
+    flex-wrap:
+        wrap;
 
-    padding:8px;
+    align-items:
+        center;
 
-    display:flex;
+    gap:
+        6px;
 
-    flex-wrap:wrap;
+    padding:
+        6px 8px;
 
-    gap:8px;
+    border:
+        1px solid var(--settings-border);
 
-    align-items:center;
+    border-radius:
+        9px;
 
-    background:var(--settings-surface);
+    background:
+        var(--settings-surface-muted);
 
-    transition:.2s;
-
-}
-
-.chip-container:focus-within{
-
-    border-color:var(--settings-primary);
-
-    box-shadow:0 0 0 3px var(--settings-primary-soft);
-
-}
-
-.chip-container input{
-
-    border:none;
-
-    outline:none;
-
-    flex:1;
-
-    min-width:180px;
-
-    padding:8px;
-
-    font-size:14px;
-
-    background:transparent;
-
-    color:var(--settings-text);
+    transition:
+        border-color .18s ease,
+        box-shadow .18s ease,
+        background .18s ease;
 
 }
 
-.recipient-chip{
 
-    display:flex;
+.chip-container:hover {
 
-    align-items:center;
-
-    gap:8px;
-
-    background:var(--settings-primary);
-
-    color:#FFFFFF;
-
-    padding:7px 12px;
-
-    border-radius:18px;
-
-    font-size:13px;
+    border-color:
+        #334965;
 
 }
 
-.recipient-chip button{
 
-    border:none;
+.chip-container:focus-within {
 
-    background:none;
+    border-color:
+        var(--settings-primary);
 
-    color:#FFFFFF;
+    background:
+        var(--settings-surface);
 
-    opacity:.8;
-
-    cursor:pointer;
-
-    font-size:18px;
-
-    line-height:1;
-
-    transition:.2s;
+    box-shadow:
+        var(--settings-input-shadow);
 
 }
 
-.recipient-chip button:hover{
 
-    opacity:1;
+.chip-container input {
+
+    flex:
+        1;
+
+    min-width:
+        180px;
+
+    padding:
+        7px;
+
+    border:
+        none;
+
+    outline:
+        none;
+
+    background:
+        transparent;
+
+    color:
+        var(--settings-text);
+
+    font-size:
+        12px;
+
+}
+
+
+.chip-container input::placeholder {
+
+    color:
+        var(--settings-text-subtle);
+
+}
+
+
+/*==========================================
+Recipient Chip
+==========================================*/
+
+.recipient-chip {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    gap:
+        7px;
+
+    padding:
+        6px 10px;
+
+    border:
+        1px solid rgba(77,163,255,.35);
+
+    border-radius:
+        7px;
+
+    color:
+        #dceeff;
+
+    background:
+        rgba(77,163,255,.12);
+
+    font-size:
+        11px;
+
+    font-weight:
+        600;
+
+    transition:
+        .18s ease;
+
+}
+
+
+.recipient-chip:hover {
+
+    border-color:
+        rgba(77,163,255,.55);
+
+    background:
+        rgba(77,163,255,.18);
+
+}
+
+
+/* chip remove button */
+
+.recipient-chip button {
+
+    width:
+        17px;
+
+    height:
+        17px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    padding:
+        0;
+
+    border:
+        none;
+
+    border-radius:
+        5px;
+
+    background:
+        transparent;
+
+    color:
+        #91b8dc;
+
+    cursor:
+        pointer;
+
+    font-size:
+        15px;
+
+    line-height:
+        1;
+
+    opacity:
+        .8;
+
+    transition:
+        .16s ease;
+
+}
+
+
+.recipient-chip button:hover {
+
+    color:
+        #fff;
+
+    background:
+        rgba(239,113,134,.18);
+
+}
+
+
+/*==========================================
+Danger / Error States
+==========================================*/
+
+.settings-body .error {
+
+    color:
+        var(--settings-danger) !important;
+
+}
+
+
+.settings-body .warning {
+
+    color:
+        var(--settings-warning) !important;
+
+}
+
+
+/*==========================================
+Responsive
+==========================================*/
+
+@media (max-width: 680px) {
+
+    .settings-panel {
+
+        width:
+            100%;
+
+        max-width:
+            100%;
+
+    }
+
+    .settings-header {
+
+        padding:
+            20px;
+
+    }
+
+    .settings-body {
+
+        padding:
+            20px;
+
+    }
+
+    .settings-footer {
+
+        padding:
+            14px 20px;
+
+    }
 
 }
