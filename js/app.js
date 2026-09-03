@@ -2,7 +2,7 @@
 ==========================================
 Daily Report Generator
 app.js
-Version 1.0
+Version 1.1
 ==========================================
 */
 import { tracker } from "./tracker.js";
@@ -34,6 +34,12 @@ let purviewValid = false;
 let generatedHTML = "";
 let wizImageURL = "";
 
+// Stale-report guard: once a report has been generated, changing any
+// source (a file, or the SharePoint link) should re-lock Copy/Export
+// rather than let someone send a report that no longer matches what's
+// uploaded.
+let reportIsCurrent = false;
+
 /*
 ==========================================
 Initialize
@@ -44,6 +50,7 @@ generateBtn.disabled = true;
 copyBtn.disabled = true;
 excelBtn.disabled = true;
 setProgress(0);
+setPreviewState("Not generated", "idle");
 await tracker.init();
 
 /*
@@ -70,11 +77,116 @@ function updateGenerateButton() {
 
 /*
 ==========================================
+Stale-report guard
+
+Called any time a source changes (file swapped/removed, SharePoint
+link edited). If a report was already generated from the old
+sources, lock Copy/Export back down until it's regenerated.
+==========================================
+*/
+
+function markReportStale() {
+
+    if (!reportIsCurrent) return;
+
+    reportIsCurrent = false;
+
+    copyBtn.disabled = true;
+    excelBtn.disabled = true;
+
+    setPreviewState("Needs regeneration", "stale");
+
+    showSavedIndicator(
+        "Report out of date",
+        "A source changed after this report was generated. Regenerate before sending.",
+        "warning"
+    );
+
+}
+
+/*
+==========================================
+Drag & Drop
+
+The .file-drop label already has drag-over styling in style.css —
+this wires up the matching behavior. Dropped files are pushed
+through the same "change" event the existing listeners already
+handle, so validation logic doesn't need to change.
+==========================================
+*/
+
+function attachDragAndDrop(fileInput) {
+
+    const dropLabel = fileInput.closest(".file-drop");
+
+    if (!dropLabel) return;
+
+    ["dragenter", "dragover"].forEach(eventName => {
+
+        dropLabel.addEventListener(eventName, (e) => {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            dropLabel.classList.add("drag-over");
+
+        });
+
+    });
+
+    ["dragleave", "dragend"].forEach(eventName => {
+
+        dropLabel.addEventListener(eventName, (e) => {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            dropLabel.classList.remove("drag-over");
+
+        });
+
+    });
+
+    dropLabel.addEventListener("drop", (e) => {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        dropLabel.classList.remove("drag-over");
+
+        const file = e.dataTransfer.files && e.dataTransfer.files[0];
+
+        if (!file) return;
+
+        // Can't assign a dropped FileList directly to an <input>, so
+        // rebuild one via DataTransfer, then dispatch "change" so the
+        // existing upload handlers run exactly as if the user had
+        // picked the file through the file browser.
+        const transfer = new DataTransfer();
+
+        transfer.items.add(file);
+
+        fileInput.files = transfer.files;
+
+        fileInput.dispatchEvent(new Event("change", { bubbles: true }));
+
+    });
+
+}
+
+attachDragAndDrop(cyeraInput);
+attachDragAndDrop(purviewInput);
+attachDragAndDrop(wizInput);
+
+/*
+==========================================
 Cyera Upload
 ==========================================
 */
 
 cyeraInput.addEventListener("change", async () => {
+
+    markReportStale();
 
     if (!cyeraInput.files.length)
         return;
@@ -117,6 +229,8 @@ Purview Upload
 
 purviewInput.addEventListener("change", async () => {
 
+    markReportStale();
+
     if (!purviewInput.files.length)
         return;
 
@@ -158,6 +272,8 @@ Wiz Upload
 
 wizInput.addEventListener("change", () => {
 
+    markReportStale();
+
     if (!wizInput.files.length) {
 
         wizImageURL = "";
@@ -189,6 +305,19 @@ wizInput.addEventListener("change", () => {
     reader.readAsDataURL(wizInput.files[0]);
 
 });
+
+/*
+==========================================
+SharePoint link
+==========================================
+*/
+
+sharePointInput.addEventListener("input", () => {
+
+    markReportStale();
+
+});
+
 /*
 ==========================================
 Remove Buttons
@@ -196,6 +325,8 @@ Remove Buttons
 */
 
 removeCyeraBtn.addEventListener("click", () => {
+
+    markReportStale();
 
     cyeraInput.value = "";
 
@@ -215,6 +346,8 @@ removeCyeraBtn.addEventListener("click", () => {
 
 removePurviewBtn.addEventListener("click", () => {
 
+    markReportStale();
+
     purviewInput.value = "";
 
     purviewData = [];
@@ -232,6 +365,8 @@ removePurviewBtn.addEventListener("click", () => {
 });
 
 removeWizBtn.addEventListener("click", () => {
+
+    markReportStale();
 
     wizInput.value = "";
 
@@ -377,8 +512,12 @@ generateBtn.addEventListener("click", () => {
     ==========================================
     */
 
+    reportIsCurrent = true;
+
     copyBtn.disabled = false;
     excelBtn.disabled = false;
+
+    setPreviewState("Ready to send", "ready");
 
     setProgress(2);
 
@@ -417,11 +556,29 @@ copyBtn.addEventListener("click", () => {
 
         showSavedIndicator(
             "Error",
-            "Preview not found."
+            "Preview not found.",
+            "error"
         );
 
         return;
 
+    }
+
+    const toRecipients = getToRecipients();
+
+    if (toRecipients.length === 0) {
+
+        showSavedIndicator(
+            "Add a recipient first",
+            "Open Settings and add at least one To recipient before sending.",
+            "warning"
+        );
+
+        document
+            .getElementById("settingsOverlay")
+            .classList.add("open");
+
+        return;
     }
 
     try {
@@ -444,25 +601,12 @@ copyBtn.addEventListener("click", () => {
 
             showSavedIndicator(
                 "Error",
-                "Unable to copy report."
+                "Unable to copy report.",
+                "error"
             );
 
             return;
 
-        }
-        const toRecipients = getToRecipients();
-
-        if (toRecipients.length === 0) {
-
-            alert(
-                "Please add at least one To recipient in Settings before sending the report."
-            );
-
-            document
-                .getElementById("settingsOverlay")
-                .classList.add("open");
-
-            return;
         }
 
         const to = toRecipients.join(";");
@@ -483,7 +627,9 @@ copyBtn.addEventListener("click", () => {
 
             "Outlook Opened",
 
-            "Report copied successfully.\nPress Ctrl + V in Outlook and click Send."
+            "Report copied successfully.\nPress Ctrl + V in Outlook and click Send.",
+
+            "success"
 
         );
 
@@ -497,7 +643,8 @@ copyBtn.addEventListener("click", () => {
 
         showSavedIndicator(
             "Error",
-            "Unable to copy report."
+            "Unable to copy report.",
+            "error"
         );
 
     }
@@ -508,10 +655,10 @@ excelBtn.addEventListener("click", () => {
 
     if (!window.currentReport) {
 
-        alert(
-
-            "Generate report first."
-
+        showSavedIndicator(
+            "Nothing to export",
+            "Generate report first.",
+            "warning"
         );
 
         return;

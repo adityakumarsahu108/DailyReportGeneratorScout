@@ -2,7 +2,7 @@
 ==========================================
 Daily Report Generator
 utils.js
-Version 0.1
+Version 0.2
 ==========================================
 */
 
@@ -386,5 +386,96 @@ Preview
 function setPreview(html) {
 
     document.getElementById("preview").innerHTML = html;
+
+}
+
+
+
+/*
+==========================================
+Preview State Badge
+
+Used for the "Not generated" / "Ready to send" /
+"Needs regeneration" pill above the preview.
+Kept separate from setStatus() since this isn't a
+per-file status — it's the state of the report as
+a whole.
+
+type: "idle" | "ready" | "stale"
+==========================================
+*/
+
+function setPreviewState(text, type = "idle") {
+
+    const badge = document.getElementById("previewState");
+
+    if (!badge) return;
+
+    badge.textContent = text;
+
+    badge.classList.remove(
+        "state-idle",
+        "state-ready",
+        "state-stale"
+    );
+
+    badge.classList.add(`state-${type}`);
+
+}
+
+
+
+/*
+==========================================
+Toast
+
+Single shared toast used across the app (Outlook
+copy confirmation, sync warnings, validation
+nudges, etc). type controls both the left-edge
+color and the icon glyph.
+
+type: "success" | "error" | "warning"
+==========================================
+*/
+
+function showSavedIndicator(title, message, type = "success") {
+
+    const toast = document.getElementById("toast");
+
+    if (!toast) return;
+
+    const titleEl = toast.querySelector(".toast-title");
+    const messageEl = toast.querySelector(".toast-message");
+    const iconEl = toast.querySelector(".toast-icon");
+
+    if (titleEl) titleEl.textContent = title;
+    if (messageEl) messageEl.textContent = message;
+
+    toast.classList.remove(
+        "toast-success",
+        "toast-error",
+        "toast-warning"
+    );
+
+    toast.classList.add(`toast-${type}`);
+
+    if (iconEl) {
+
+        iconEl.textContent =
+            type === "error" ? "!" :
+            type === "warning" ? "!" :
+            "✓";
+
+    }
+
+    toast.classList.add("show");
+
+    clearTimeout(toast._hideTimer);
+
+    toast._hideTimer = setTimeout(() => {
+
+        toast.classList.remove("show");
+
+    }, 4000);
 
 }

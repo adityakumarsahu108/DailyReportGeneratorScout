@@ -73,7 +73,7 @@ function loadSettings() {
  */
 function saveSettings() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-    showSavedIndicator();
+    showSettingsSaved();
 }
 
 /*
@@ -245,9 +245,14 @@ function createChipInput(containerId, inputId, propertyName) {
 }
 
 /**
- * Shows the "✔ All changes saved" indicator and fades it out after ~2.5s.
+ * Shows the "✔ All changes saved" indicator in the settings footer and
+ * fades it out after ~2.5s. Renamed from the old showSavedIndicator() —
+ * that name is now the app-wide toast in utils.js, and having two
+ * functions of the same name loaded as plain scripts meant this one
+ * (loaded last) was silently shadowing the toast everywhere else,
+ * including the "Outlook opened" confirmation after Send.
  */
-function showSavedIndicator() {
+function showSettingsSaved() {
 
     const indicator = document.getElementById("settingsSaved");
 
