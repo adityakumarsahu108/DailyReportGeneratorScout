@@ -2613,7 +2613,24 @@ a {
         not-allowed;
 
 }
+.info-tooltip {
+    width: 17px;
+    height: 17px;
+    flex: 0 0 17px;
 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid currentColor;
+    border-radius: 50%;
+
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1;
+
+    opacity: .75;
+}
 
 /* =========================================================
    29. PREVIEW META
