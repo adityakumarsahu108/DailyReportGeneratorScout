@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,11 +20,11 @@
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <div class="brand-mark" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
-                         stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
-                        <path d="M15 2v5h5"/>
-                        <circle cx="9.5" cy="14.5" r="1.4" fill="currentColor" stroke="none"/>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" />
+                        <path d="M15 2v5h5" />
+                        <circle cx="9.5" cy="14.5" r="1.4" fill="currentColor" stroke="none" />
                     </svg>
                 </div>
                 <div>
@@ -37,8 +38,8 @@
                 <a class="nav-item active" href="#workspace">
                     <span class="nav-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                            <path d="M4 5h16M4 12h10M4 19h16"/>
-                            <circle cx="18" cy="12" r="2"/>
+                            <path d="M4 5h16M4 12h10M4 19h16" />
+                            <circle cx="18" cy="12" r="2" />
                         </svg>
                     </span>
                     Report builder
@@ -57,8 +58,9 @@
                 <button class="nav-item nav-button" id="settingsBtn" type="button" aria-haspopup="dialog">
                     <span class="nav-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                            <circle cx="12" cy="12" r="3"/>
-                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            <circle cx="12" cy="12" r="3" />
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
                         </svg>
                     </span>
                     Settings
@@ -88,23 +90,25 @@
                     <div class="layout-toggle" role="group" aria-label="Workspace layout">
                         <button id="layoutSplitBtn" class="layout-btn active" type="button" aria-pressed="true">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                <rect x="3" y="4" width="7" height="16" rx="1.5"/>
-                                <rect x="14" y="4" width="7" height="16" rx="1.5"/>
+                                <rect x="3" y="4" width="7" height="16" rx="1.5" />
+                                <rect x="14" y="4" width="7" height="16" rx="1.5" />
                             </svg>
                             Split
                         </button>
                         <button id="layoutStackedBtn" class="layout-btn" type="button" aria-pressed="false">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                <rect x="4" y="3" width="16" height="7" rx="1.5"/>
-                                <rect x="4" y="14" width="16" height="7" rx="1.5"/>
+                                <rect x="4" y="3" width="16" height="7" rx="1.5" />
+                                <rect x="4" y="14" width="16" height="7" rx="1.5" />
                             </svg>
                             Stacked
                         </button>
                     </div>
-                    <button class="mobile-settings" type="button" onclick="document.getElementById('settingsBtn').click()" aria-label="Open settings">
+                    <button class="mobile-settings" type="button"
+                        onclick="document.getElementById('settingsBtn').click()" aria-label="Open settings">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                            <circle cx="12" cy="12" r="3"/>
-                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82V15z"/>
+                            <circle cx="12" cy="12" r="3" />
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82V15z" />
                         </svg>
                     </button>
                 </div>
@@ -157,8 +161,8 @@
                                     <input id="cyeraFile" type="file" accept=".csv">
                                     <span class="file-icon csv-icon">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                            <path d="M14 2v6h6M8 13h8M8 17h5"/>
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                            <path d="M14 2v6h6M8 13h8M8 17h5" />
                                         </svg>
                                     </span>
                                     <span class="file-text">
@@ -167,13 +171,14 @@
                                     </span>
                                     <span class="upload-arrow">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                            <path d="M12 16V4M7 9l5-5 5 5M5 20h14"/>
+                                            <path d="M12 16V4M7 9l5-5 5 5M5 20h14" />
                                         </svg>
                                     </span>
                                 </label>
                                 <button id="removeCyera" class="icon-btn" type="button" aria-label="Remove Cyera CSV">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/>
+                                        <path
+                                            d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6" />
                                     </svg>
                                 </button>
                             </div>
@@ -183,8 +188,8 @@
                                     <input id="purviewFile" type="file" accept=".csv">
                                     <span class="file-icon csv-icon">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                            <path d="M14 2v6h6M8 13h8M8 17h5"/>
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                            <path d="M14 2v6h6M8 13h8M8 17h5" />
                                         </svg>
                                     </span>
                                     <span class="file-text">
@@ -193,13 +198,15 @@
                                     </span>
                                     <span class="upload-arrow">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                            <path d="M12 16V4M7 9l5-5 5 5M5 20h14"/>
+                                            <path d="M12 16V4M7 9l5-5 5 5M5 20h14" />
                                         </svg>
                                     </span>
                                 </label>
-                                <button id="removePurview" class="icon-btn" type="button" aria-label="Remove Purview CSV">
+                                <button id="removePurview" class="icon-btn" type="button"
+                                    aria-label="Remove Purview CSV">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/>
+                                        <path
+                                            d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6" />
                                     </svg>
                                 </button>
                             </div>
@@ -209,9 +216,9 @@
                                     <input id="wizImage" type="file" accept="image/*">
                                     <span class="file-icon image-icon">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                            <rect x="3" y="3" width="18" height="18" rx="2"/>
-                                            <circle cx="9" cy="9" r="2"/>
-                                            <path d="m21 15-5-5L5 21"/>
+                                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                                            <circle cx="9" cy="9" r="2" />
+                                            <path d="m21 15-5-5L5 21" />
                                         </svg>
                                     </span>
                                     <span class="file-text">
@@ -220,13 +227,15 @@
                                     </span>
                                     <span class="upload-arrow">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                            <path d="M12 16V4M7 9l5-5 5 5M5 20h14"/>
+                                            <path d="M12 16V4M7 9l5-5 5 5M5 20h14" />
                                         </svg>
                                     </span>
                                 </label>
-                                <button id="removeWiz" class="icon-btn" type="button" aria-label="Remove Wiz screenshot">
+                                <button id="removeWiz" class="icon-btn" type="button"
+                                    aria-label="Remove Wiz screenshot">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/>
+                                        <path
+                                            d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6" />
                                     </svg>
                                 </button>
                             </div>
@@ -241,8 +250,8 @@
                             </div>
                             <div class="input-with-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                    <path d="M10 13a5 5 0 0 0 7.07.07l2-2A5 5 0 0 0 12 4"/>
-                                    <path d="M14 11a5 5 0 0 0-7.07-.07l-2 2A5 5 0 0 0 12 20"/>
+                                    <path d="M10 13a5 5 0 0 0 7.07.07l2-2A5 5 0 0 0 12 4" />
+                                    <path d="M14 11a5 5 0 0 0-7.07-.07l-2 2A5 5 0 0 0 12 20" />
                                 </svg>
                                 <input id="sharepointLink" type="text" placeholder="Paste SharePoint report link">
                             </div>
@@ -251,7 +260,7 @@
                         <button id="generateBtn" disabled>
                             <span class="button-icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M13 2 3 14h9l-1 8 10-12h-9z"/>
+                                    <path d="M13 2 3 14h9l-1 8 10-12h-9z" />
                                 </svg>
                             </span>
                             Generate report
@@ -266,8 +275,8 @@
                     <section class="quick-info">
                         <div class="quick-info-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                                <path d="M9 12l2 2 4-4"/>
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                <path d="M9 12l2 2 4-4" />
                             </svg>
                         </div>
                         <div>
@@ -278,7 +287,7 @@
                 </div>
 
                 <section class="panel preview-panel readout-panel" id="previewPanel">
-                   
+
                     <div class="preview-header">
                         <div class="panel-heading preview-heading">
                             <div>
@@ -291,17 +300,27 @@
                         <div class="preview-actions">
                             <button id="excelBtn" class="secondary-action" disabled>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                    <rect x="3" y="3" width="18" height="18" rx="2"/>
-                                    <path d="M3 9h18M9 21V9"/>
+                                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                                    <path d="M3 9h18M9 21V9" />
                                 </svg>
                                 Export Excel
                             </button>
+
                             <button id="copyBtn" class="primary-action" disabled>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                                    <rect x="8" y="8" width="12" height="12" rx="2"/>
-                                    <path d="M4 16V4a2 2 0 0 1 2-2h10"/>
+                                    <rect x="8" y="8" width="12" height="12" rx="2" />
+                                    <path d="M4 16V4a2 2 0 0 1 2-2h10" />
                                 </svg>
                                 Send via Outlook
+                            </button>
+
+                            <button id="outlookWebBtn" class="primary-action outlook-web-action" disabled>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <rect x="3" y="4" width="18" height="16" rx="2" />
+                                    <path d="M3 8h18" />
+                                    <path d="M7 12h4M7 16h7" />
+                                </svg>
+                                Send via Outlook Web
                             </button>
                         </div>
                     </div>
@@ -388,4 +407,5 @@
     <script type="module" src="js/app.js"></script>
     <script src="js/settings.js"></script>
 </body>
+
 </html>

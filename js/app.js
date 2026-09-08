@@ -20,6 +20,7 @@ const removeWizBtn = document.getElementById("removeWiz");
 
 const generateBtn = document.getElementById("generateBtn");
 const copyBtn = document.getElementById("copyBtn");
+const outlookWebBtn = document.getElementById("outlookWebBtn");
 const excelBtn =
     document.getElementById("excelBtn");
 
@@ -49,6 +50,7 @@ Initialize
 generateBtn.disabled = true;
 copyBtn.disabled = true;
 excelBtn.disabled = true;
+outlookWebBtn.disabled = true;
 setProgress(0);
 setPreviewState("Not generated", "idle");
 await tracker.init();
@@ -516,6 +518,7 @@ generateBtn.addEventListener("click", () => {
 
     copyBtn.disabled = false;
     excelBtn.disabled = false;
+    outlookWebBtn.disabled = false;
 
     setPreviewState("Ready to send", "ready");
 
@@ -644,6 +647,133 @@ copyBtn.addEventListener("click", () => {
         showSavedIndicator(
             "Error",
             "Unable to copy report.",
+            "error"
+        );
+
+    }
+
+});
+
+/*
+==========================================
+Send via Outlook Web
+==========================================
+*/
+
+outlookWebBtn.addEventListener("click", () => {
+
+    const preview = document.getElementById("preview");
+
+    if (!preview) {
+
+        showSavedIndicator(
+            "Error",
+            "Preview not found.",
+            "error"
+        );
+
+        return;
+    }
+
+    const toRecipients = getToRecipients();
+
+    if (toRecipients.length === 0) {
+
+        showSavedIndicator(
+            "Add a recipient first",
+            "Open Settings and add at least one To recipient before sending.",
+            "warning"
+        );
+
+        document
+            .getElementById("settingsOverlay")
+            .classList.add("open");
+
+        return;
+    }
+
+    try {
+
+        /*
+        ------------------------------------------
+        Copy report exactly like Outlook Desktop
+        ------------------------------------------
+        */
+
+        const selection = window.getSelection();
+
+        selection.removeAllRanges();
+
+        const range = document.createRange();
+
+        range.selectNodeContents(preview);
+
+        selection.addRange(range);
+
+        const successful = document.execCommand("copy");
+
+        selection.removeAllRanges();
+
+        if (!successful) {
+
+            showSavedIndicator(
+                "Error",
+                "Unable to copy report.",
+                "error"
+            );
+
+            return;
+        }
+
+        /*
+        ------------------------------------------
+        Prepare Outlook information
+        ------------------------------------------
+        */
+
+        const to = toRecipients.join(";");
+        const cc = getCCRecipients().join(";");
+        const subject = generateSubject();
+
+        /*
+        ------------------------------------------
+        Track Outlook Web usage
+        ------------------------------------------
+        */
+
+        tracker.track("open_outlook");
+
+        /*
+        ------------------------------------------
+        Open Outlook Web
+        ------------------------------------------
+        */
+
+        const outlookWebUrl =
+            `https://outlook.office.com/mail/deeplink/compose` +
+            `?to=${encodeURIComponent(to)}` +
+            `&cc=${encodeURIComponent(cc)}` +
+            `&subject=${encodeURIComponent(subject)}`;
+
+        window.open(outlookWebUrl, "_blank");
+
+        setProgress(3);
+
+        showSavedIndicator(
+            "Outlook Web Opened",
+            "Report copied successfully.\nPress Ctrl + V in Outlook Web and click Send.",
+            "success"
+        );
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        showSavedIndicator(
+            "Error",
+            "Unable to open Outlook Web.",
             "error"
         );
 

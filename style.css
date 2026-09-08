@@ -141,7 +141,7 @@
        Layout
        ----------------------------------------------------- */
 
-    --sidebar-width: 238px;
+    --sidebar-width: 200px;
 
     --content-max:
         1500px;
@@ -2516,6 +2516,47 @@ a {
 
     background:
         #edf6fd;
+
+}
+/* =========================================================
+   Outlook Web Action
+   ========================================================= */
+
+.outlook-web-action {
+
+    border:
+        1px solid var(--paper-line);
+
+    color:
+        var(--paper-ink-2);
+
+    background:
+        var(--paper-2);
+
+}
+
+
+.outlook-web-action:hover:not(:disabled) {
+
+    color:
+        #246ba9;
+
+    border-color:
+        #9fc8ea;
+
+    background:
+        #edf6fd;
+
+}
+
+
+.outlook-web-action:disabled {
+
+    opacity:
+        .55;
+
+    cursor:
+        not-allowed;
 
 }
 
