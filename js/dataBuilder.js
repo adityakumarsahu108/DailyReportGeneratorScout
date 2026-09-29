@@ -2,26 +2,35 @@
 ==========================================
 Daily Report Generator
 dataBuilder.js
-Version 1.0
+Version 0.3
+==========================================
 
 Purpose:
-- Convert Cyera and Purview CSV records
-  into a structured data object.
+- Convert Cyera and Purview CSV records into a
+  normalized structured data object.
+- Support both OLD and NEW Cyera CSV formats.
+- Keep optional fields flexible so future Cyera
+  format changes do not immediately break the app.
 - Preserve useful alert-level information.
-- Generate summaries for future analytics.
-- NO API calls are made here.
+- Generate summaries for analytics.
+
+IMPORTANT:
+- "Assigned User Email" and "Assignee" are treated
+  as DIFFERENT fields.
+- Assignee may contain a system/workspace name
+  rather than an email address.
 ==========================================
 */
 
 
 /*
 ==========================================
-Helpers
+Basic Cleaning Helpers
 ==========================================
 */
 
 function cleanValue(value) {
-    if (value === null || value === undefined) {
+    if (value === undefined || value === null) {
         return null;
     }
 
@@ -30,7 +39,8 @@ function cleanValue(value) {
     if (
         cleaned === "" ||
         cleaned.toLowerCase() === "nan" ||
-        cleaned.toLowerCase() === "null"
+        cleaned.toLowerCase() === "null" ||
+        cleaned.toLowerCase() === "undefined"
     ) {
         return null;
     }
@@ -40,7 +50,6 @@ function cleanValue(value) {
 
 
 function cleanArrayValue(value) {
-
     const cleaned = cleanValue(value);
 
     if (!cleaned) {
@@ -54,36 +63,182 @@ function cleanArrayValue(value) {
 }
 
 
-function countBy(records, field) {
+/*
+==========================================
+Field Resolver
+==========================================
+
+Allows the application to support multiple
+CSV schemas.
+
+Example:
+
+getField(record, [
+    "ID",
+    "Alert ID"
+]);
+
+This means either the old "ID" field OR
+the new "Alert ID" field can be used.
+==========================================
+*/
+
+function getField(record, aliases) {
+
+    if (!record || !aliases) {
+        return null;
+    }
+
+    for (const alias of aliases) {
+
+        if (
+            Object.prototype.hasOwnProperty.call(record, alias)
+        ) {
+
+            const value = cleanValue(record[alias]);
+
+            if (value !== null) {
+                return value;
+            }
+        }
+    }
+
+    return null;
+}
+
+
+/*
+==========================================
+Case-Insensitive Field Resolver
+
+Useful for future Cyera exports where
+capitalization may change.
+
+Example:
+
+"Alert ID"
+"alert id"
+"ALERT ID"
+
+will all be treated as the same field.
+==========================================
+*/
+
+function getFieldInsensitive(record, aliases) {
+
+    if (!record || !aliases) {
+        return null;
+    }
+
+    const keys = Object.keys(record);
+
+    for (const alias of aliases) {
+
+        const normalizedAlias = alias
+            .trim()
+            .toLowerCase();
+
+        const matchingKey = keys.find(key =>
+            key.trim().toLowerCase() === normalizedAlias
+        );
+
+        if (matchingKey) {
+
+            const value = cleanValue(record[matchingKey]);
+
+            if (value !== null) {
+                return value;
+            }
+        }
+    }
+
+    return null;
+}
+
+
+/*
+==========================================
+Combined Resolver
+
+First checks exact names.
+
+Then performs case-insensitive lookup.
+==========================================
+*/
+
+function resolveField(record, aliases) {
+
+    const exact = getField(record, aliases);
+
+    if (exact !== null) {
+        return exact;
+    }
+
+    return getFieldInsensitive(record, aliases);
+}
+
+
+/*
+==========================================
+Array Resolver
+==========================================
+*/
+
+function resolveArrayField(record, aliases) {
+
+    const value = resolveField(record, aliases);
+
+    if (!value) {
+        return [];
+    }
+
+    return value
+        .split(",")
+        .map(item => item.trim())
+        .filter(Boolean);
+}
+
+
+/*
+==========================================
+Count Helpers
+==========================================
+*/
+
+function countBy(records, key) {
 
     const counts = {};
 
     records.forEach(record => {
 
-        const value =
-            cleanValue(record[field]) || "Unknown";
+        const value = cleanValue(record[key]);
 
-        counts[value] =
-            (counts[value] || 0) + 1;
+        if (!value) {
+            return;
+        }
 
+        counts[value] = (counts[value] || 0) + 1;
     });
 
     return counts;
 }
 
 
-function countNormalized(records, getter) {
+function countNormalized(records, key) {
 
     const counts = {};
 
     records.forEach(record => {
 
-        const value =
-            cleanValue(getter(record)) || "Unknown";
+        const raw = cleanValue(record[key]);
 
-        counts[value] =
-            (counts[value] || 0) + 1;
+        if (!raw) {
+            return;
+        }
 
+        const value = raw.toLowerCase();
+
+        counts[value] = (counts[value] || 0) + 1;
     });
 
     return counts;
@@ -92,173 +247,473 @@ function countNormalized(records, getter) {
 
 /*
 ==========================================
-Cyera Normalization
+CYERA NORMALIZER
+==========================================
+
+Supports:
+
+OLD FORMAT
+-----------
+ID
+Name
+Timestamp
+Updated At
+Original Analysis Severity
+External Severity
+Status
+Status Updated At
+Assigned User Email
+Assigned User ID
+Triggering User
+Policy ID
+Policy Name
+Policy Type
+Policy Action
+Rule Names
+Channel
+Source Activity
+Actual Action
+Configured Action
+Data Type
+Data Categories
+Destination Name
+Destination Domains
+...
+
+NEW FORMAT
+-----------
+Alert ID
+Alert Name
+Time
+Severity
+Status
+What Happened
+Alert Action
+Actor Name
+Actor Email
+Actor Job Title
+Actor Reports To
+Destination Names
+Destination Recipients
+Alert Type
+Agent Data Summary
+Topics
+Channel
+Policy Name
+Assignee
+Provider
 ==========================================
 */
 
 function normalizeCyeraAlert(record) {
 
+    /*
+    ------------------------------------------
+    Core Alert Information
+    ------------------------------------------
+    */
+
+    const id = resolveField(record, [
+        "ID",
+        "Alert ID"
+    ]);
+
+    const name = resolveField(record, [
+        "Name",
+        "Alert Name"
+    ]);
+
+    const timestamp = resolveField(record, [
+        "Timestamp",
+        "Time"
+    ]);
+
+    const updatedAt = resolveField(record, [
+        "Updated At",
+        "Updated",
+        "Last Updated"
+    ]);
+
+
+    /*
+    ------------------------------------------
+    Severity
+    ------------------------------------------
+    */
+
+    const severity = resolveField(record, [
+        "Severity",
+        "Original Analysis Severity",
+        "Original Severity"
+    ]);
+
+    const originalSeverity = resolveField(record, [
+        "Original Analysis Severity",
+        "Original Severity"
+    ]);
+
+    const externalSeverity = resolveField(record, [
+        "External Severity",
+        "External Severity Level"
+    ]);
+
+
+    /*
+    ------------------------------------------
+    Status
+    ------------------------------------------
+    */
+
+    const status = resolveField(record, [
+        "Status"
+    ]);
+
+    const statusUpdatedAt = resolveField(record, [
+        "Status Updated At",
+        "Status Updated",
+        "Status Change Time"
+    ]);
+
+
+    /*
+    ------------------------------------------
+    Assignment
+    ------------------------------------------
+
+    IMPORTANT:
+
+    Old format:
+        Assigned User Email
+
+    New format:
+        Assignee
+
+    These are NOT assumed to be the same thing.
+    ------------------------------------------
+    */
+
+    const assignedUserEmail = resolveField(record, [
+        "Assigned User Email"
+    ]);
+
+    const assignedUserId = resolveField(record, [
+        "Assigned User ID"
+    ]);
+
+    const assignee = resolveField(record, [
+        "Assignee"
+    ]);
+
+
+    /*
+    ------------------------------------------
+    Actor / User Information
+    ------------------------------------------
+    */
+
+    const triggeringUser = resolveField(record, [
+        "Triggering User",
+        "Actor Name"
+    ]);
+
+    const actorEmail = resolveField(record, [
+        "Actor Email"
+    ]);
+
+    const authenticatedUser = resolveField(record, [
+        "Authenticated User"
+    ]);
+
+
+    /*
+    ------------------------------------------
+    Actor Details - NEW FORMAT
+    ------------------------------------------
+    */
+
+    const actorJobTitle = resolveField(record, [
+        "Actor Job Title"
+    ]);
+
+    const actorReportsTo = resolveField(record, [
+        "Actor Reports To"
+    ]);
+
+
+    /*
+    ------------------------------------------
+    Policy
+    ------------------------------------------
+    */
+
+    const policyId = resolveField(record, [
+        "Policy ID"
+    ]);
+
+    const policyName = resolveField(record, [
+        "Policy Name"
+    ]);
+
+    const policyType = resolveField(record, [
+        "Policy Type"
+    ]);
+
+    const policyAction = resolveField(record, [
+        "Policy Action",
+        "Alert Action"
+    ]);
+
+
+    /*
+    ------------------------------------------
+    Rules
+    ------------------------------------------
+    */
+
+    const ruleNames = resolveArrayField(record, [
+        "Rule Names"
+    ]);
+
+
+    /*
+    ------------------------------------------
+    Channel / Activity
+    ------------------------------------------
+    */
+
+    const channel = resolveField(record, [
+        "Channel"
+    ]);
+
+    const sourceActivity = resolveField(record, [
+        "Source Activity"
+    ]);
+
+    const actualAction = resolveField(record, [
+        "Actual Action",
+        "Alert Action"
+    ]);
+
+    const configuredAction = resolveField(record, [
+        "Configured Action"
+    ]);
+
+
+    /*
+    ------------------------------------------
+    Data Information
+    ------------------------------------------
+    */
+
+    const dataType = resolveField(record, [
+        "Data Type"
+    ]);
+
+    const dataCategories = resolveArrayField(record, [
+        "Data Categories",
+        "Topics"
+    ]);
+
+
+    /*
+    ------------------------------------------
+    Destination
+    ------------------------------------------
+
+    Old:
+        Destination Name
+        Destination Domains
+        Destinations Info Is Public
+        Destinations Info Roles Info Role
+
+    New:
+        Destination Names
+        Destination Recipients
+    ------------------------------------------
+    */
+
+    const destinationName = resolveField(record, [
+        "Destination Name",
+        "Destination Names"
+    ]);
+
+    const destinationRecipients = resolveField(record, [
+        "Destination Recipients"
+    ]);
+
+    const destinationDomains = resolveArrayField(record, [
+        "Destination Domains"
+    ]);
+
+    const destinationIsPublic = resolveField(record, [
+        "Destinations Info Is Public"
+    ]);
+
+    const destinationRole = resolveField(record, [
+        "Destinations Info Roles Info Role"
+    ]);
+
+
+    /*
+    ------------------------------------------
+    Identity Information
+    ------------------------------------------
+    */
+
+    const identityEmail = resolveField(record, [
+        "Identity Info Mail"
+    ]);
+
+    const identityDisplayName = resolveField(record, [
+        "Identity Info Display Name"
+    ]);
+
+    const identityDepartment = resolveField(record, [
+        "Identity Info Department"
+    ]);
+
+    const identityJobTitle = resolveField(record, [
+        "Identity Info Job Title"
+    ]);
+
+    const identityOfficeLocation = resolveField(record, [
+        "Identity Info Office Location"
+    ]);
+
+
+    /*
+    ------------------------------------------
+    New Cyera Descriptive Fields
+    ------------------------------------------
+    */
+
+    const whatHappened = resolveField(record, [
+        "What Happened"
+    ]);
+
+    const agentDataSummary = resolveField(record, [
+        "Agent Data Summary"
+    ]);
+
+    const alertType = resolveField(record, [
+        "Alert Type"
+    ]);
+
+    const provider = resolveField(record, [
+        "Provider"
+    ]);
+
+
+    /*
+    ------------------------------------------
+    Return Normalized Object
+    ------------------------------------------
+    */
+
     return {
 
-        source: "cyera",
-
         /*
-        Core identity
+        Core
         */
-        id:
-            cleanValue(record["ID"]),
-
-        name:
-            cleanValue(record["Name"]),
-
-        timestamp:
-            cleanValue(record["Timestamp"]),
-
-        updatedAt:
-            cleanValue(record["Updated At"]),
+        id,
+        name,
+        timestamp,
+        updatedAt,
 
         /*
-        Severity / Status
+        Severity
         */
-        severity:
-            cleanValue(record["Severity"]),
-
-        originalSeverity:
-            cleanValue(record["Original Analysis Severity"]),
-
-        externalSeverity:
-            cleanValue(record["External Severity"]),
-
-        status:
-            cleanValue(record["Status"]),
-
-        statusUpdatedAt:
-            cleanValue(record["Status Updated At"]),
+        severity,
+        originalSeverity,
+        externalSeverity,
 
         /*
-        IMPORTANT:
-        This is the person the alert is assigned to.
+        Status
         */
-        assignedUserEmail:
-            cleanValue(record["Assigned User Email"]),
-
-        assignedUserId:
-            cleanValue(record["Assigned User ID"]),
+        status,
+        statusUpdatedAt,
 
         /*
-        Person/activity that triggered the alert.
-        Kept separate from assignedUserEmail.
+        Assignment
         */
-        triggeringUser:
-            cleanValue(record["Triggering User"]),
-
-        authenticatedUser:
-            cleanValue(record["Authenticated User"]),
+        assignedUserEmail,
+        assignedUserId,
+        assignee,
 
         /*
-        Policy information
+        Actor
+        */
+        triggeringUser,
+        actorEmail,
+        authenticatedUser,
+        actorJobTitle,
+        actorReportsTo,
+
+        /*
+        Policy
         */
         policy: {
-
-            id:
-                cleanValue(record["Policy ID"]),
-
-            name:
-                cleanValue(record["Policy Name"]),
-
-            type:
-                cleanValue(record["Policy Type"]),
-
-            action:
-                cleanValue(record["Policy Action"])
+            id: policyId,
+            name: policyName,
+            type: policyType,
+            action: policyAction
         },
 
         /*
-        Detection rules
+        Rules
         */
-        ruleNames:
-            cleanArrayValue(record["Rule Names"]),
+        ruleNames,
 
         /*
         Activity
         */
-        channel:
-            cleanValue(record["Channel"]),
-
-        sourceActivity:
-            cleanValue(record["Source Activity"]),
-
-        actualAction:
-            cleanValue(record["Actual Action"]),
-
-        configuredAction:
-            cleanValue(record["Configured Action"]),
+        channel,
+        sourceActivity,
+        actualAction,
+        configuredAction,
 
         /*
-        Data involved
+        Data
         */
-        dataType:
-            cleanValue(record["Data Type"]),
-
-        dataCategories:
-            cleanArrayValue(record["Data Categories"]),
+        dataType,
+        dataCategories,
 
         /*
-        Destination information.
-
-        We intentionally do NOT copy:
-        - email body
-        - attachments
-        - file contents
-        - full URLs
-        - detailed incident descriptions
+        Destination
         */
         destination: {
-
-            name:
-                cleanValue(record["Destination Name"]),
-
-            domains:
-                cleanArrayValue(record["Destination Domains"]),
-
-            isPublic:
-                cleanValue(record["Destinations Info Is Public"]),
-
-            role:
-                cleanValue(record["Destinations Info Roles Info Role"])
+            name: destinationName,
+            recipients: destinationRecipients,
+            domains: destinationDomains,
+            isPublic: destinationIsPublic,
+            role: destinationRole
         },
 
         /*
-        User context.
-
-        Keep only fields that can support
-        operational analytics.
+        Identity
         */
         user: {
+            email: identityEmail,
+            displayName: identityDisplayName,
+            department: identityDepartment,
+            jobTitle: identityJobTitle,
+            officeLocation: identityOfficeLocation
+        },
 
-            email:
-                cleanValue(record["Identity Info Mail"]),
-
-            displayName:
-                cleanValue(record["Identity Info Display Name"]),
-
-            department:
-                cleanValue(record["Identity Info Department"]),
-
-            jobTitle:
-                cleanValue(record["Identity Info Job Title"]),
-
-            officeLocation:
-                cleanValue(record["Identity Info Office Location"])
-        }
-
+        /*
+        New format fields
+        */
+        whatHappened,
+        agentDataSummary,
+        alertType,
+        provider
     };
 }
 
 
 /*
 ==========================================
-Purview Normalization
+PURVIEW NORMALIZER
 ==========================================
 */
 
@@ -266,133 +721,233 @@ function normalizePurviewAlert(record) {
 
     return {
 
-        source: "purview",
+        alertName: resolveField(record, [
+            "Alert name",
+            "Alert Name",
+            "Name"
+        ]),
 
-        alertName:
-            cleanValue(record["Alert name"]),
+        severity: resolveField(record, [
+            "Severity"
+        ]),
 
-        severity:
-            cleanValue(record["Severity"]),
+        status: resolveField(record, [
+            "Status"
+        ]),
 
-        status:
-            cleanValue(record["Status"]),
+        timeDetected: resolveField(record, [
+            "Time detected",
+            "Time Detected",
+            "Timestamp"
+        ]),
 
-        timeDetected:
-            cleanValue(record["Time detected"]),
+        users: resolveField(record, [
+            "Users",
+            "User"
+        ]),
 
-        user:
-            cleanValue(record["Users"]),
-
-        location:
-            cleanValue(record["Location"])
-
+        location: resolveField(record, [
+            "Location"
+        ])
     };
 }
 
 
 /*
 ==========================================
-Cyera Summary
+CYERA SUMMARY
 ==========================================
 */
 
-function buildCyeraSummary(records) {
+function summarizeCyeraAlerts(records) {
+
+    const normalizedRecords = records.map(normalizeCyeraAlert);
+
+
+    /*
+    ------------------------------------------
+    Assigned User
+
+    Prefer email when available.
+
+    If new format has no email, fall back
+    to Assignee.
+    ------------------------------------------
+    */
+
+    const assignedUserRecords = normalizedRecords.map(record => {
+
+        return {
+            assignedUser:
+                record.assignedUserEmail ||
+                record.assignee ||
+                "Unassigned"
+        };
+
+    });
+
+
+    /*
+    ------------------------------------------
+    Policy
+    ------------------------------------------
+    */
+
+    const policyRecords = normalizedRecords.map(record => {
+
+        return {
+            policy:
+                record.policy.name ||
+                "Unknown"
+        };
+
+    });
+
+
+    /*
+    ------------------------------------------
+    Channel
+    ------------------------------------------
+    */
+
+    const channelRecords = normalizedRecords.map(record => {
+
+        return {
+            channel:
+                record.channel ||
+                "Unknown"
+        };
+
+    });
+
+
+    /*
+    ------------------------------------------
+    Data Type
+    ------------------------------------------
+    */
+
+    const dataTypeRecords = normalizedRecords.map(record => {
+
+        return {
+            dataType:
+                record.dataType ||
+                "Unknown"
+        };
+
+    });
+
+
+    /*
+    ------------------------------------------
+    Severity / Status
+    ------------------------------------------
+    */
+
+    const severityRecords = normalizedRecords.map(record => {
+
+        return {
+            severity:
+                record.severity ||
+                "Unknown"
+        };
+
+    });
+
+
+    const statusRecords = normalizedRecords.map(record => {
+
+        return {
+            status:
+                record.status ||
+                "Unknown"
+        };
+
+    });
+
+
+    /*
+    ------------------------------------------
+    Return Summary
+    ------------------------------------------
+    */
 
     return {
 
-        total:
-            records.length,
+        total: normalizedRecords.length,
 
-        bySeverity:
-            countNormalized(
-                records,
-                record => record.severity
-            ),
+        bySeverity: countBy(
+            severityRecords,
+            "severity"
+        ),
 
-        byStatus:
-            countNormalized(
-                records,
-                record => record.status
-            ),
+        byStatus: countNormalized(
+            statusRecords,
+            "status"
+        ),
 
-        byAssignedUser:
-            countNormalized(
-                records,
-                record => record.assignedUserEmail
-            ),
+        byAssignedUser: countBy(
+            assignedUserRecords,
+            "assignedUser"
+        ),
 
-        byPolicy:
-            countNormalized(
-                records,
-                record => record.policy?.name
-            ),
+        byPolicy: countBy(
+            policyRecords,
+            "policy"
+        ),
 
-        byChannel:
-            countNormalized(
-                records,
-                record => record.channel
-            ),
+        byChannel: countBy(
+            channelRecords,
+            "channel"
+        ),
 
-        byDataType:
-            countNormalized(
-                records,
-                record => record.dataType
-            )
-
+        byDataType: countBy(
+            dataTypeRecords,
+            "dataType"
+        )
     };
 }
 
 
 /*
 ==========================================
-Purview Summary
+PURVIEW SUMMARY
 ==========================================
 */
 
-function buildPurviewSummary(records) {
+function summarizePurviewAlerts(records) {
+
+    const normalizedRecords = records.map(
+        normalizePurviewAlert
+    );
+
 
     return {
 
-        total:
-            records.length,
+        total: normalizedRecords.length,
 
-        bySeverity:
-            countNormalized(
-                records,
-                record => record.severity
-            ),
+        bySeverity: countBy(
+            normalizedRecords.map(record => ({
+                severity:
+                    record.severity || "Unknown"
+            })),
+            "severity"
+        ),
 
-        byStatus:
-            countNormalized(
-                records,
-                record => record.status
-            ),
-
-        byUser:
-            countNormalized(
-                records,
-                record => record.user
-            ),
-
-        byLocation:
-            countNormalized(
-                records,
-                record => record.location
-            ),
-
-        byAlertName:
-            countNormalized(
-                records,
-                record => record.alertName
-            )
-
+        byStatus: countNormalized(
+            normalizedRecords.map(record => ({
+                status:
+                    record.status || "Unknown"
+            })),
+            "status"
+        )
     };
 }
 
 
 /*
 ==========================================
-Combined Summary
+COMBINED SUMMARY
 ==========================================
 */
 
@@ -406,46 +961,42 @@ function buildCombinedSummary(
         ...purviewRecords
     ];
 
+
     return {
 
-        totalAlerts:
-            allRecords.length,
+        totalAlerts: allRecords.length,
 
-        cyeraAlerts:
-            cyeraRecords.length,
+        cyeraAlerts: cyeraRecords.length,
 
-        purviewAlerts:
-            purviewRecords.length,
+        purviewAlerts: purviewRecords.length,
 
         bySource: {
-
-            cyera:
-                cyeraRecords.length,
-
-            purview:
-                purviewRecords.length
-
+            Cyera: cyeraRecords.length,
+            Purview: purviewRecords.length
         },
 
-        bySeverity:
-            countNormalized(
-                allRecords,
-                record => record.severity
-            ),
+        bySeverity: countBy(
+            allRecords.map(record => ({
+                severity:
+                    record.severity || "Unknown"
+            })),
+            "severity"
+        ),
 
-        byStatus:
-            countNormalized(
-                allRecords,
-                record => record.status
-            )
-
+        byStatus: countNormalized(
+            allRecords.map(record => ({
+                status:
+                    record.status || "Unknown"
+            })),
+            "status"
+        )
     };
 }
 
 
 /*
 ==========================================
-Build Daily Report Data
+BUILD DAILY REPORT DATA
 ==========================================
 */
 
@@ -454,25 +1005,61 @@ function buildDailyReportData(
     purviewData
 ) {
 
+    /*
+    ------------------------------------------
+    Normalize source data
+    ------------------------------------------
+    */
+
+    const cyeraRecords = (cyeraData || [])
+        .map(normalizeCyeraAlert);
+
+    const purviewRecords = (purviewData || [])
+        .map(normalizePurviewAlert);
+
+
+    /*
+    ==========================================
+    Reporting metadata
+    ==========================================
+    */
+
+    const today = getToday();
+
+    const todayDate =
+        today instanceof Date
+            ? today
+            : new Date(today);
+
+    const reportDate =
+        formatDisplayDate(todayDate);
+
+    const reportId =
+        "REP-" +
+        todayDate
+            .toISOString()
+            .slice(0, 10)
+            .replace(/-/g, "");
+
+    const generatedAt =
+        new Date().toISOString();
+
+
+    /*
+    ==========================================
+    Reporting window
+    ==========================================
+    */
+
     const reportingWindow =
         generateReportingWindow();
 
-    const cyeraRecords =
-        cyeraData.map(normalizeCyeraAlert);
-
-    const purviewRecords =
-        purviewData.map(normalizePurviewAlert);
 
     /*
-    Report ID is based on the reporting
-    period rather than the time the user
-    happened to click Generate.
+    ------------------------------------------
+    Build final report object
+    ------------------------------------------
     */
-
-    const reportDate =
-        formatReportDateForId(
-            reportingWindow.to
-        );
 
     return {
 
@@ -480,28 +1067,23 @@ function buildDailyReportData(
 
         report: {
 
-            reportId:
-                `REP-${reportDate}`,
+            reportId,
 
             reportDate,
 
-            reportingWindow: {
+            reportingWindow,
 
-                from:
-                    reportingWindow.from,
+            generatedAt,
 
-                to:
-                    reportingWindow.to
-
-            },
-
-            generatedAt:
-                new Date().toISOString(),
-
-            generatorVersion:
-                "2.0"
-
+            generatorVersion: "2.0"
         },
+
+
+        /*
+        ------------------------------------------
+        Cyera
+        ------------------------------------------
+        */
 
         cyera: {
 
@@ -512,11 +1094,17 @@ function buildDailyReportData(
                 cyeraRecords,
 
             summary:
-                buildCyeraSummary(
-                    cyeraRecords
+                summarizeCyeraAlerts(
+                    cyeraData || []
                 )
-
         },
+
+
+        /*
+        ------------------------------------------
+        Purview
+        ------------------------------------------
+        */
 
         purview: {
 
@@ -527,171 +1115,25 @@ function buildDailyReportData(
                 purviewRecords,
 
             summary:
-                buildPurviewSummary(
-                    purviewRecords
+                summarizePurviewAlerts(
+                    purviewData || []
                 )
-
         },
 
-        summary:
+
+        /*
+        ------------------------------------------
+        Combined
+        ------------------------------------------
+        */
+
+        combined:
             buildCombinedSummary(
                 cyeraRecords,
                 purviewRecords
             )
-
     };
 }
-
-
-/*
-==========================================
-Report Date Helper
-==========================================
-
-Uses the existing reporting window and
-converts the end date into YYYYMMDD.
-
-Example:
-
-2026-08-20
-     ↓
-20260820
-==========================================
-*/
-
-/*
-==========================================
-Report Date Helper
-==========================================
-
-Converts the reporting-window end date
-into YYYYMMDD.
-
-Example:
-
-20th August 2026, 02:00 AM IST
-        ↓
-20260820
-==========================================
-*/
-
-function formatReportDateForId(dateString) {
-
-    if (!dateString) {
-
-        const now = new Date();
-
-        return [
-            now.getFullYear(),
-            String(
-                now.getMonth() + 1
-            ).padStart(2, "0"),
-            String(
-                now.getDate()
-            ).padStart(2, "0")
-        ].join("");
-
-    }
-
-
-    const value =
-        String(dateString);
-
-
-    /*
-    ==========================================
-    Match formats such as:
-
-    20th August 2026
-    20 August 2026
-    ==========================================
-    */
-
-    const match =
-        value.match(
-            /(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]+)\s+(\d{4})/
-        );
-
-
-    if (match) {
-
-        const day =
-            String(
-                parseInt(match[1], 10)
-            ).padStart(2, "0");
-
-
-        const monthNames = {
-
-            january: "01",
-            february: "02",
-            march: "03",
-            april: "04",
-            may: "05",
-            june: "06",
-            july: "07",
-            august: "08",
-            september: "09",
-            october: "10",
-            november: "11",
-            december: "12"
-
-        };
-
-
-        const month =
-            monthNames[
-                match[2].toLowerCase()
-            ];
-
-
-        const year =
-            match[3];
-
-
-        if (month) {
-
-            return `${year}${month}${day}`;
-
-        }
-
-    }
-
-
-    /*
-    ==========================================
-    Fallback for YYYY-MM-DD
-    ==========================================
-    */
-
-    const isoMatch =
-        value.match(
-            /(\d{4})-(\d{2})-(\d{2})/
-        );
-
-
-    if (isoMatch) {
-
-        return (
-            `${isoMatch[1]}` +
-            `${isoMatch[2]}` +
-            `${isoMatch[3]}`
-        );
-
-    }
-
-
-    /*
-    ==========================================
-    Do NOT silently create a wrong date
-    ==========================================
-    */
-
-    throw new Error(
-        `Unable to determine report date from: ${dateString}`
-    );
-}
-
 export {
     buildDailyReportData
 };
